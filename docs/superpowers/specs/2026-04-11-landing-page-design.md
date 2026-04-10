@@ -43,8 +43,8 @@ All under `(marketing)` route group with shared header + footer layout (no dashb
 
 ### 5. Pricing Table
 
-- Free: 10 scripts/month, £0
-- Pro: 30 scripts/month, £9.99/month
+- Free: 5 scripts/month, £0
+- Pro: 25 scripts/month, £9.99/month
 - Extra credits: £2.99 for 5 generations
 - Referral: 1 bonus script per referral
 - CTAs: "Start Free" / "Go Pro"

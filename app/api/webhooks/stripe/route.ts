@@ -84,7 +84,7 @@ export async function POST(req: Request) {
           .update(users)
           .set({
             plan: "paid",
-            scriptsLimit: 50,
+            scriptsLimit: 25,
             scriptsUsed: 0,
             stripeSubscriptionId: subscriptionId ?? null,
             updatedAt: new Date(),
@@ -130,7 +130,7 @@ export async function POST(req: Request) {
           .update(users)
           .set({
             plan: isActive ? "paid" : "free",
-            scriptsLimit: isActive ? 50 : 5,
+            scriptsLimit: isActive ? 25 : 5,
             stripeSubscriptionId: subscription.id,
             updatedAt: new Date(),
           })

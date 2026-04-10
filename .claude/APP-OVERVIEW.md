@@ -98,7 +98,7 @@ ContentOS Studio is a full content production system and creator operating syste
 - **Terms of Service page** — full terms covering subscriptions, acceptable use, content ownership, AI-generated content disclaimer, YouTube data, liability
 - **E2E testing (Playwright)** — test suites for navigation (public/protected route redirects), API security (tRPC auth, webhook signature verification), security headers (CSP, X-Frame-Options, Permissions-Policy), rate limiting
 - **Deploy config (vercel.json)** — function duration limits for tRPC (60s) and webhooks (30s)
-- **Landing page** — full marketing page with hero, 4-feature grid, Brand Brain section, script preview mock, pricing table (Free £0/10 scripts, Pro £9.99/30 scripts), FAQ, footer CTA
+- **Landing page** — full marketing page with hero, 4-feature grid, Brand Brain section, script preview mock, pricing table (Free £0/5 scripts, Pro £9.99/25 scripts), FAQ, footer CTA
 - **Demo page** — YouTube video embed (placeholder) + 3-step guided tour (Brand Brain → Create → Edit/Export)
 - **Links page** — linktree-style social links (Instagram, TikTok, YouTube placeholders)
 - **Blog page** — blog index with coming soon placeholder

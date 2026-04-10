@@ -133,8 +133,8 @@
 
 ### Monetization
 
-- **Free tier** — limited scripts per month
-- **Paid tier** — higher limit
+- **Free tier** — 5 scripts per month
+- **Paid tier** — 25 scripts per month, £9.99/month
 - **Referral** — 1 bonus script per referral
 - **Extra credits** — £2.99 for 5 extra script generations
 
@@ -171,6 +171,6 @@
 ## Rebuild Approach
 
 - New repo from zero
-- Copy only .env.local from current project (same Stripe, Clerk, DB, Upstash, Sentry, etc.)
+- Fresh .env.local — new API keys for all services (Stripe, Clerk, DB, Upstash, Sentry, etc.)
 - Tech stack TBD
 - Deploy to same Vercel project + domain when ready

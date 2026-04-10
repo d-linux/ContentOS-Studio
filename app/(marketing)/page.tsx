@@ -67,7 +67,7 @@ export default function LandingPage() {
           </div>
 
           <p className="text-muted-foreground mt-4 text-sm">
-            10 free scripts per month. No credit card required.
+            5 free scripts per month. No credit card required.
           </p>
         </div>
       </section>
@@ -326,7 +326,7 @@ export default function LandingPage() {
                 <Separator />
                 <ul className="space-y-2.5">
                   {[
-                    "10 script generations per month",
+                    "5 script generations per month",
                     "All 4 creation modes",
                     "Brand Brain personalisation",
                     "Scene editing & regeneration",
@@ -370,7 +370,7 @@ export default function LandingPage() {
                 <Separator />
                 <ul className="space-y-2.5">
                   {[
-                    "30 script generations per month",
+                    "25 script generations per month",
                     "Everything in Free",
                     "YouTube Analyzer feedback loop",
                     "Priority generation speed",
