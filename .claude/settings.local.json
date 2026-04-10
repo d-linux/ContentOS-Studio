@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh auth:*)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "Bash(npx create-next-app@latest --help)",
+      "WebFetch(domain:clerk.com)",
+      "WebFetch(domain:docs.arcjet.com)",
+      "WebSearch",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Read(//tmp/**)",
+      "Bash(npx create-next-app@latest contentos-studio-tmp --typescript --tailwind --eslint --app --use-npm --no-git)",
+      "Bash(cp -r /tmp/contentos-studio-tmp/* \"/home/d-linux/Documents/Web Apps/ContentOS Studio/\")",
+      "Bash(cp /tmp/contentos-studio-tmp/.eslintrc.json \"/home/d-linux/Documents/Web Apps/ContentOS Studio/\")",
+      "Bash(cp /tmp/contentos-studio-tmp/.gitignore \"/home/d-linux/Documents/Web Apps/ContentOS Studio/\")",
+      "Bash(cp /tmp/contentos-studio-tmp/AGENTS.md \"/home/d-linux/Documents/Web Apps/ContentOS Studio/\")",
+      "Bash(grep -v '^\\\\.\\\\.$')",
+      "Bash(grep -v '^\\\\.$')",
+      "Bash(cp /tmp/contentos-studio-tmp/eslint.config.mjs \"/home/d-linux/Documents/Web Apps/ContentOS Studio/\")",
+      "Bash(cp /tmp/contentos-studio-tmp/CLAUDE.md \"/home/d-linux/Documents/Web Apps/ContentOS Studio/\")",
+      "Bash(rm -rf /tmp/contentos-studio-tmp)"
+    ]
+  }
+}
