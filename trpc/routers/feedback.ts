@@ -2,6 +2,8 @@ import { z } from "zod/v4";
 import { eq } from "drizzle-orm";
 import { router, protectedProcedure } from "../init";
 import { feedback, users } from "@/db/schema";
+import { sendEmail } from "@/lib/email";
+import { FeedbackThanksEmail } from "@/emails/feedback-thanks";
 
 export const feedbackRouter = router({
   // ─── Submit feedback (earns 1 free script) ────────────
@@ -25,6 +27,13 @@ export const feedbackRouter = router({
           updatedAt: new Date(),
         })
         .where(eq(users.id, ctx.user.id));
+
+      // Send thank-you email (non-blocking — doesn't affect mutation result)
+      await sendEmail({
+        to: ctx.user.email,
+        subject: "Thanks for your feedback — here's a free credit",
+        react: FeedbackThanksEmail({ name: ctx.user.name || "" }),
+      });
 
       return created;
     }),

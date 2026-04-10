@@ -4,6 +4,11 @@ import { eq } from "drizzle-orm";
 import { stripe } from "@/lib/stripe";
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import { sendEmail } from "@/lib/email";
+import { SubscriptionActivatedEmail } from "@/emails/subscription-activated";
+import { SubscriptionCancelledEmail } from "@/emails/subscription-cancelled";
+import { CreditsPurchasedEmail } from "@/emails/credits-purchased";
+import { UsageResetEmail } from "@/emails/usage-reset";
 
 export async function POST(req: Request) {
   const body = await req.text();
@@ -49,13 +54,24 @@ export async function POST(req: Request) {
           .limit(1);
 
         if (user) {
+          const newBalance = user.extraCredits + 5;
+
           await db
             .update(users)
             .set({
-              extraCredits: user.extraCredits + 5,
+              extraCredits: newBalance,
               updatedAt: new Date(),
             })
             .where(eq(users.id, userId));
+
+          await sendEmail({
+            to: user.email,
+            subject: "Your extra credits are ready",
+            react: CreditsPurchasedEmail({
+              name: user.name || "",
+              newBalance,
+            }),
+          });
         }
       } else if (session.mode === "subscription") {
         // Subscription checkout — upgrade to paid
@@ -74,6 +90,20 @@ export async function POST(req: Request) {
             updatedAt: new Date(),
           })
           .where(eq(users.id, userId));
+
+        const [user] = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1);
+
+        if (user) {
+          await sendEmail({
+            to: user.email,
+            subject: "Welcome to ContentOS Studio Pro",
+            react: SubscriptionActivatedEmail({ name: user.name || "" }),
+          });
+        }
       }
       break;
     }
@@ -132,6 +162,12 @@ export async function POST(req: Request) {
             updatedAt: new Date(),
           })
           .where(eq(users.id, user.id));
+
+        await sendEmail({
+          to: user.email,
+          subject: "Your subscription has been cancelled",
+          react: SubscriptionCancelledEmail({ name: user.name || "" }),
+        });
       }
       break;
     }
@@ -156,6 +192,15 @@ export async function POST(req: Request) {
             .update(users)
             .set({ scriptsUsed: 0, updatedAt: new Date() })
             .where(eq(users.id, user.id));
+
+          await sendEmail({
+            to: user.email,
+            subject: "Your monthly scripts have reset",
+            react: UsageResetEmail({
+              name: user.name || "",
+              scriptsLimit: user.scriptsLimit,
+            }),
+          });
         }
       }
       break;

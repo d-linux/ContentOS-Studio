@@ -84,6 +84,8 @@ ContentOS Studio is a full content production system and creator operating syste
 - **Help page** — FAQ accordion, support contact, feedback form (+1 free credit)
 - **Settings page** — Clerk UserProfile, legal links
 - **Auth pages** — Clerk sign-in/sign-up with route groups
+- **Transactional emails (Resend)** — 6 templates: welcome, subscription activated, subscription cancelled, credits purchased, usage reset, feedback thanks. Non-throwing sendEmail utility, wired to Stripe webhook + Clerk webhook + feedback router
+- **Clerk webhook** — `user.created` event handler creates DB user record + sends welcome email, verified via `verifyWebhook()`
 
 ---
 
@@ -123,7 +125,7 @@ ContentOS Studio is a full content production system and creator operating syste
 
 ### Phase 4: Polish
 
-- [ ] Email templates (Resend)
+- [x] Email templates (Resend) — 6 templates, Clerk webhook for user creation + welcome, wired to all billing events + feedback
 - [ ] Sentry + PostHog integration
 - [ ] End-to-end testing
 - [ ] Deploy to Vercel + domain connection
@@ -170,3 +172,4 @@ Vercel
 | 2026-04-10 | Phase 1 complete: Next.js 16, shadcn/ui, Drizzle schema, Clerk + Arcjet middleware, tRPC v11, Prettier + ESLint           |
 | 2026-04-10 | Phase 2 complete: Brand Brain, Script gen engine, Script CRUD, Series, Trends, Remix, Billing, YouTube Analyzer, Feedback |
 | 2026-04-10 | Phase 3 complete: All frontend pages built — layout, Brand Brain, Create (4 modes), Script view, Library, Billing, Help, Settings, Auth |
+| 2026-04-10 | Phase 4.1: Email templates (Resend) — 6 transactional emails, Clerk user.created webhook, sendEmail utility, wired to Stripe webhook + feedback router |
