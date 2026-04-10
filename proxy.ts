@@ -22,6 +22,9 @@ const aj = arcjet({
 
 const isPublicRoute = createRouteMatcher([
   "/",
+  "/demo",
+  "/links",
+  "/blog",
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/api/webhooks(.*)",
@@ -52,7 +55,7 @@ export default clerkMiddleware(async (auth, req) => {
       "img-src 'self' blob: data: https://img.clerk.com",
       "font-src 'self' data:",
       "connect-src 'self' https://api.clerk.dev https://api.stripe.com https://*.arcjet.com https://*.ingest.sentry.io https://us.i.posthog.com",
-      "frame-src 'self' https://js.clerk.dev https://challenges.cloudflare.com",
+      "frame-src 'self' https://js.clerk.dev https://challenges.cloudflare.com https://www.youtube.com",
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",

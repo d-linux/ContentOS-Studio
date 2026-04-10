@@ -53,6 +53,10 @@ ContentOS Studio is a full content production system and creator operating syste
 | Sign Up     | Built | Clerk sign-up page                                             |
 | Privacy     | Built | Privacy Policy page                                            |
 | Terms       | Built | Terms of Service page                                          |
+| Landing     | Built | Marketing landing page — hero, features, pricing, FAQ          |
+| Demo        | Built | Product demo — YouTube embed + guided tour                     |
+| Links       | Built | Linktree-style social links                                    |
+| Blog        | Built | Blog index — coming soon placeholder                           |
 
 ---
 
@@ -94,6 +98,11 @@ ContentOS Studio is a full content production system and creator operating syste
 - **Terms of Service page** — full terms covering subscriptions, acceptable use, content ownership, AI-generated content disclaimer, YouTube data, liability
 - **E2E testing (Playwright)** — test suites for navigation (public/protected route redirects), API security (tRPC auth, webhook signature verification), security headers (CSP, X-Frame-Options, Permissions-Policy), rate limiting
 - **Deploy config (vercel.json)** — function duration limits for tRPC (60s) and webhooks (30s)
+- **Landing page** — full marketing page with hero, 4-feature grid, Brand Brain section, script preview mock, pricing table (Free £0/10 scripts, Pro £9.99/30 scripts), FAQ, footer CTA
+- **Demo page** — YouTube video embed (placeholder) + 3-step guided tour (Brand Brain → Create → Edit/Export)
+- **Links page** — linktree-style social links (Instagram, TikTok, YouTube placeholders)
+- **Blog page** — blog index with coming soon placeholder
+- **Marketing layout** — `(marketing)` route group with sticky header (Demo link, Sign In, Get Started), footer (links, social, copyright), auth redirect for signed-in users
 
 ---
 
@@ -185,3 +194,4 @@ Vercel
 | 2026-04-10 | Phase 4.1: Email templates (Resend) — 6 transactional emails, Clerk user.created webhook, sendEmail utility, wired to Stripe webhook + feedback router |
 | 2026-04-10 | Phase 4.2: Sentry + PostHog — @sentry/nextjs with Session Replay + source maps + tunnel, @posthog/next with auto pageview + user identification |
 | 2026-04-10 | Phase 4.3: Legal pages (Privacy Policy + Terms of Service), E2E testing (Playwright — navigation, API, security), deploy config (vercel.json) |
+| 2026-04-11 | Marketing pages: landing page (hero, features, Brand Brain, script preview, pricing, FAQ), demo page (YouTube embed + guided tour), links page, blog placeholder, (marketing) route group with header/footer |

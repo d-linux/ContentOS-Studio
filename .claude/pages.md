@@ -18,11 +18,16 @@
 | Sign Up     | `/sign-up`                | Built  | Clerk sign-up page                                            |
 | Privacy     | `/privacy`                | Built  | Privacy Policy                                                |
 | Terms       | `/terms`                  | Built  | Terms of Service                                              |
+| Landing     | `/`                       | Built  | Marketing landing page — hero, features, pricing, FAQ         |
+| Demo        | `/demo`                   | Built  | Product demo — YouTube embed + guided tour                    |
+| Links       | `/links`                  | Built  | Linktree-style social links (Instagram, TikTok, YouTube)      |
+| Blog        | `/blog`                   | Built  | Blog index — coming soon placeholder                         |
 
 ---
 
 ## Route Groups
 
+- `(marketing)` — Public landing, demo, links, blog pages with header/footer layout
 - `(dashboard)` — All main app pages with sidebar layout
 - `(auth)` — Sign-in/sign-up with centered minimal layout
 
