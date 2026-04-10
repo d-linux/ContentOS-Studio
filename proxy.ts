@@ -47,11 +47,11 @@ export default clerkMiddleware(async (auth, req) => {
     "Content-Security-Policy",
     [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.clerk.dev https://challenges.cloudflare.com",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.clerk.dev https://challenges.cloudflare.com https://us-assets.i.posthog.com",
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' blob: data: https://img.clerk.com",
       "font-src 'self' data:",
-      "connect-src 'self' https://api.clerk.dev https://api.stripe.com https://*.arcjet.com",
+      "connect-src 'self' https://api.clerk.dev https://api.stripe.com https://*.arcjet.com https://*.ingest.sentry.io https://us.i.posthog.com",
       "frame-src 'self' https://js.clerk.dev https://challenges.cloudflare.com",
       "object-src 'none'",
       "base-uri 'self'",
@@ -72,7 +72,7 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    "/((?!_next|monitoring|ingest|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
     "/(api|trpc)(.*)",
   ],
 };

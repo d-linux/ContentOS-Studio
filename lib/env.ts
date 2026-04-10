@@ -32,6 +32,9 @@ const envSchema = z.object({
 
   // Sentry
   NEXT_PUBLIC_SENTRY_DSN: z.string().optional(),
+  SENTRY_ORG: z.string().optional(),
+  SENTRY_PROJECT: z.string().optional(),
+  SENTRY_AUTH_TOKEN: z.string().optional(),
 
   // PostHog
   NEXT_PUBLIC_POSTHOG_KEY: z.string().optional(),

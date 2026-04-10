@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import { PostHogProvider, PostHogPageView } from "@posthog/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { TRPCReactProvider } from "@/trpc/client";
 import "./globals.css";
@@ -32,7 +33,10 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       >
         <body className="flex min-h-full flex-col">
-          <TRPCReactProvider>{children}</TRPCReactProvider>
+          <PostHogProvider clientOptions={{ api_host: "/ingest" }}>
+            <PostHogPageView />
+            <TRPCReactProvider>{children}</TRPCReactProvider>
+          </PostHogProvider>
         </body>
       </html>
     </ClerkProvider>

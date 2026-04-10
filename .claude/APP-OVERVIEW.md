@@ -86,6 +86,8 @@ ContentOS Studio is a full content production system and creator operating syste
 - **Auth pages** — Clerk sign-in/sign-up with route groups
 - **Transactional emails (Resend)** — 6 templates: welcome, subscription activated, subscription cancelled, credits purchased, usage reset, feedback thanks. Non-throwing sendEmail utility, wired to Stripe webhook + Clerk webhook + feedback router
 - **Clerk webhook** — `user.created` event handler creates DB user record + sends welcome email, verified via `verifyWebhook()`
+- **Sentry error monitoring** — `@sentry/nextjs` with client/server/edge configs, Session Replay, `withSentryConfig` source map upload, `/monitoring` tunnel route, `global-error.tsx` boundary, `instrumentation.ts` for server-side registration
+- **PostHog analytics** — `@posthog/next` with `PostHogProvider`, auto pageview tracking, `/ingest` reverse proxy, Clerk user identification in dashboard layout
 
 ---
 
@@ -126,7 +128,7 @@ ContentOS Studio is a full content production system and creator operating syste
 ### Phase 4: Polish
 
 - [x] Email templates (Resend) — 6 templates, Clerk webhook for user creation + welcome, wired to all billing events + feedback
-- [ ] Sentry + PostHog integration
+- [x] Sentry + PostHog integration — error monitoring with Session Replay, product analytics with pageview tracking + user identification
 - [ ] End-to-end testing
 - [ ] Deploy to Vercel + domain connection
 
@@ -147,7 +149,8 @@ Vercel
     Data: Drizzle -> PostgreSQL
     AI: Claude API
     Payments: Stripe
-  Services: Upstash Redis, Resend, Sentry, PostHog
+  Monitoring: Sentry (errors + replay), PostHog (analytics)
+  Services: Upstash Redis, Resend
 ```
 
 ---
@@ -173,3 +176,4 @@ Vercel
 | 2026-04-10 | Phase 2 complete: Brand Brain, Script gen engine, Script CRUD, Series, Trends, Remix, Billing, YouTube Analyzer, Feedback |
 | 2026-04-10 | Phase 3 complete: All frontend pages built — layout, Brand Brain, Create (4 modes), Script view, Library, Billing, Help, Settings, Auth |
 | 2026-04-10 | Phase 4.1: Email templates (Resend) — 6 transactional emails, Clerk user.created webhook, sendEmail utility, wired to Stripe webhook + feedback router |
+| 2026-04-10 | Phase 4.2: Sentry + PostHog — @sentry/nextjs with Session Replay + source maps + tunnel, @posthog/next with auto pageview + user identification |

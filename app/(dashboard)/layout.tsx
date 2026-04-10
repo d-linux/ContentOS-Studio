@@ -2,6 +2,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Toaster } from "@/components/ui/sonner";
+import { PostHogIdentify } from "@/components/analytics/posthog-identify";
 
 export default function DashboardLayout({
   children,
@@ -12,6 +13,7 @@ export default function DashboardLayout({
     <TooltipProvider>
       <SidebarProvider>
         <AppSidebar />
+        <PostHogIdentify />
         <main className="flex flex-1 flex-col">
           <header className="flex h-12 items-center gap-2 border-b px-4">
             <SidebarTrigger />
