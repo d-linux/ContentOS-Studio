@@ -14,7 +14,7 @@ ContentOS Studio is a full content production system and creator operating syste
 
 ## Current Status
 
-**Phase:** Phase 1 complete (foundation built, ready for Phase 2: Core Backend)
+**Phase:** Phase 2 complete (core backend built, ready for Phase 3: Frontend)
 
 ---
 
@@ -63,6 +63,15 @@ ContentOS Studio is a full content production system and creator operating syste
 - **tRPC v11** — base router, server caller for RSCs, React provider for client components, route handler at `/api/trpc`
 - **Middleware pipeline** — Arcjet (bot + rate limit + shield) → Clerk (auth) → route
 - **Prettier + ESLint** — configured with Tailwind plugin, eslint-config-prettier, zero warnings
+- **Brand Brain CRUD** — tRPC router: get + upsert, auto-marks onboarding complete on first create
+- **Script generation engine** — Anthropic Claude API with `messages.parse` + `zodOutputFormat` for structured scene-by-scene output
+- **Script CRUD** — create (with AI generation + usage deduction), list, getById (with scenes + caption), delete, scene regeneration (1x), scene editing, caption generation, voiceover assembly
+- **Series logic** — 5 connection modes (sequential, anthology, running_format, journey, response), full episode context chaining, series CRUD
+- **Trends** — YouTube Data API v3 search by user niche, Redis-cached (1hr TTL), generate script from trending topic
+- **Remix** — cross-platform script regeneration with AI, preserves remix source reference
+- **Billing** — Stripe checkout (subscription + one-time credits), customer portal, webhook handler (checkout.session.completed, subscription.updated/deleted, invoice.paid), referral system
+- **YouTube Analyzer** — fetch video stats from YouTube API, generate engagement insights, feed data back to Brand Brain
+- **Feedback** — submit feedback and earn 1 free script credit
 
 ---
 
@@ -78,13 +87,15 @@ ContentOS Studio is a full content production system and creator operating syste
 
 ### Phase 2: Core Backend
 
-- [ ] Brand Brain CRUD
-- [ ] Script generation engine (AI prompts, Zod output schemas)
-- [ ] Script CRUD
-- [ ] Series logic (connection modes, episode chaining)
-- [ ] Trends (YouTube Data API + Redis caching)
-- [ ] Remix logic
-- [ ] Billing (Stripe checkout, webhooks, usage, credits, referrals)
+- [x] Brand Brain CRUD (get + upsert, onboarding trigger)
+- [x] Script generation engine (Claude API + zodOutputFormat structured output)
+- [x] Script CRUD (create, list, get, delete, scene regen, scene edit, caption gen, voiceover)
+- [x] Series logic (5 connection modes, episode context chaining)
+- [x] Trends (YouTube Data API v3 + Redis caching)
+- [x] Remix logic (cross-platform regeneration)
+- [x] Billing (Stripe checkout, webhooks, portal, credits, referrals)
+- [x] YouTube Analyzer (video stats + Brand Brain feedback loop)
+- [x] Feedback (submit + earn credit)
 
 ### Phase 3: Frontend
 
@@ -140,7 +151,8 @@ Vercel
 
 ## Changelog
 
-| Date       | Change                                       |
-| ---------- | -------------------------------------------- |
-| 2026-04-10 | Initial APP-OVERVIEW.md created from v2 spec |
+| Date       | Change                                                                                                          |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| 2026-04-10 | Initial APP-OVERVIEW.md created from v2 spec                                                                    |
 | 2026-04-10 | Phase 1 complete: Next.js 16, shadcn/ui, Drizzle schema, Clerk + Arcjet middleware, tRPC v11, Prettier + ESLint |
+| 2026-04-10 | Phase 2 complete: Brand Brain, Script gen engine, Script CRUD, Series, Trends, Remix, Billing, YouTube Analyzer, Feedback |

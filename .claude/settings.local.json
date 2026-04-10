@@ -26,7 +26,8 @@
       "Bash(node -e \"const z = require\\('zod/v4'\\); console.log\\('Zod v4 import works'\\); console.log\\(typeof z.url\\)\")",
       "Bash(npx tsc:*)",
       "Bash(npx eslint:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(node -e ':*)"
     ]
   }
 }
