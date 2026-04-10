@@ -14,7 +14,7 @@ ContentOS Studio is a full content production system and creator operating syste
 
 ## Current Status
 
-**Phase:** Phase 3 complete (frontend built, ready for Phase 4: Polish)
+**Phase:** Phase 4 near-complete (legal pages, E2E tests, deploy config done — final step: deploy to Vercel)
 
 ---
 
@@ -51,6 +51,8 @@ ContentOS Studio is a full content production system and creator operating syste
 | Script View | Built | Scene display, regen, edit, speech, teleprompter, export       |
 | Sign In     | Built | Clerk sign-in page                                             |
 | Sign Up     | Built | Clerk sign-up page                                             |
+| Privacy     | Built | Privacy Policy page                                            |
+| Terms       | Built | Terms of Service page                                          |
 
 ---
 
@@ -88,6 +90,10 @@ ContentOS Studio is a full content production system and creator operating syste
 - **Clerk webhook** — `user.created` event handler creates DB user record + sends welcome email, verified via `verifyWebhook()`
 - **Sentry error monitoring** — `@sentry/nextjs` with client/server/edge configs, Session Replay, `withSentryConfig` source map upload, `/monitoring` tunnel route, `global-error.tsx` boundary, `instrumentation.ts` for server-side registration
 - **PostHog analytics** — `@posthog/next` with `PostHogProvider`, auto pageview tracking, `/ingest` reverse proxy, Clerk user identification in dashboard layout
+- **Privacy Policy page** — full privacy policy covering data collection, third-party services, security, data retention, user rights, cookies
+- **Terms of Service page** — full terms covering subscriptions, acceptable use, content ownership, AI-generated content disclaimer, YouTube data, liability
+- **E2E testing (Playwright)** — test suites for navigation (public/protected route redirects), API security (tRPC auth, webhook signature verification), security headers (CSP, X-Frame-Options, Permissions-Policy), rate limiting
+- **Deploy config (vercel.json)** — function duration limits for tRPC (60s) and webhooks (30s)
 
 ---
 
@@ -129,7 +135,8 @@ ContentOS Studio is a full content production system and creator operating syste
 
 - [x] Email templates (Resend) — 6 templates, Clerk webhook for user creation + welcome, wired to all billing events + feedback
 - [x] Sentry + PostHog integration — error monitoring with Session Replay, product analytics with pageview tracking + user identification
-- [ ] End-to-end testing
+- [x] End-to-end testing (Playwright — navigation, API, security headers, rate limiting)
+- [x] Deploy config (vercel.json with function durations)
 - [ ] Deploy to Vercel + domain connection
 
 ---
@@ -177,3 +184,4 @@ Vercel
 | 2026-04-10 | Phase 3 complete: All frontend pages built — layout, Brand Brain, Create (4 modes), Script view, Library, Billing, Help, Settings, Auth |
 | 2026-04-10 | Phase 4.1: Email templates (Resend) — 6 transactional emails, Clerk user.created webhook, sendEmail utility, wired to Stripe webhook + feedback router |
 | 2026-04-10 | Phase 4.2: Sentry + PostHog — @sentry/nextjs with Session Replay + source maps + tunnel, @posthog/next with auto pageview + user identification |
+| 2026-04-10 | Phase 4.3: Legal pages (Privacy Policy + Terms of Service), E2E testing (Playwright — navigation, API, security), deploy config (vercel.json) |

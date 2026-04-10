@@ -16,6 +16,8 @@
 | Settings    | `/settings`               | Built  | Account management, legal pages                               |
 | Sign In     | `/sign-in`                | Built  | Clerk sign-in page                                            |
 | Sign Up     | `/sign-up`                | Built  | Clerk sign-up page                                            |
+| Privacy     | `/privacy`                | Built  | Privacy Policy                                                |
+| Terms       | `/terms`                  | Built  | Terms of Service                                              |
 
 ---
 
