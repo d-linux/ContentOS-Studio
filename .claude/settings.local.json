@@ -22,7 +22,11 @@
       "Bash(rm -rf /tmp/contentos-studio-tmp)",
       "Bash(gh repo:*)",
       "Bash(npm install:*)",
-      "Bash(npx shadcn@latest init -y --defaults)"
+      "Bash(npx shadcn@latest init -y --defaults)",
+      "Bash(node -e \"const z = require\\('zod/v4'\\); console.log\\('Zod v4 import works'\\); console.log\\(typeof z.url\\)\")",
+      "Bash(npx tsc:*)",
+      "Bash(npx eslint:*)",
+      "Bash(npx prettier:*)"
     ]
   }
 }
