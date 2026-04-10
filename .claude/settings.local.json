@@ -19,7 +19,10 @@
       "Bash(grep -v '^\\\\.$')",
       "Bash(cp /tmp/contentos-studio-tmp/eslint.config.mjs \"/home/d-linux/Documents/Web Apps/ContentOS Studio/\")",
       "Bash(cp /tmp/contentos-studio-tmp/CLAUDE.md \"/home/d-linux/Documents/Web Apps/ContentOS Studio/\")",
-      "Bash(rm -rf /tmp/contentos-studio-tmp)"
+      "Bash(rm -rf /tmp/contentos-studio-tmp)",
+      "Bash(gh repo:*)",
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest init -y --defaults)"
     ]
   }
 }
