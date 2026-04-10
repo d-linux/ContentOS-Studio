@@ -27,7 +27,9 @@
       "Bash(npx tsc:*)",
       "Bash(npx eslint:*)",
       "Bash(npx prettier:*)",
-      "Bash(node -e ':*)"
+      "Bash(node -e ':*)",
+      "Bash(npx shadcn@latest add card input textarea label select tabs dialog badge separator dropdown-menu sidebar sheet avatar progress tooltip form sonner -y)",
+      "Bash(npx shadcn@latest add card input textarea label select tabs dialog badge separator dropdown-menu sidebar sheet avatar progress tooltip form sonner -y --overwrite)"
     ]
   }
 }

@@ -14,7 +14,7 @@ ContentOS Studio is a full content production system and creator operating syste
 
 ## Current Status
 
-**Phase:** Phase 2 complete (core backend built, ready for Phase 3: Frontend)
+**Phase:** Phase 3 complete (frontend built, ready for Phase 4: Polish)
 
 ---
 
@@ -42,12 +42,15 @@ ContentOS Studio is a full content production system and creator operating syste
 
 | Page        | Status      | Description                                                    |
 | ----------- | ----------- | -------------------------------------------------------------- |
-| Create      | Not started | Script generation — four modes: Own Idea, Trend, Series, Remix |
-| Library     | Not started | Script storage — All + Series sections, YouTube Analyzer       |
-| Brand Brain | Not started | Creator AI context — tone, niche, boundaries, YouTube data     |
-| Help        | Not started | Support, FAQ, feedback (1 free script reward)                  |
-| Billing     | Not started | Plans, usage meter, invoices, cancellation, upgrade/downgrade  |
-| Settings    | Not started | Account management, legal pages                                |
+| Create      | Built | Script generation — four modes: Own Idea, Trend, Series, Remix |
+| Library     | Built | Script storage — All + Series sections, YouTube Analyzer       |
+| Brand Brain | Built | Creator AI context — tone, niche, boundaries, YouTube data     |
+| Help        | Built | Support, FAQ, feedback (1 free script reward)                  |
+| Billing     | Built | Plans, usage meter, invoices, cancellation, upgrade/downgrade  |
+| Settings    | Built | Account management, legal pages                                |
+| Script View | Built | Scene display, regen, edit, speech, teleprompter, export       |
+| Sign In     | Built | Clerk sign-in page                                             |
+| Sign Up     | Built | Clerk sign-up page                                             |
 
 ---
 
@@ -72,6 +75,15 @@ ContentOS Studio is a full content production system and creator operating syste
 - **Billing** — Stripe checkout (subscription + one-time credits), customer portal, webhook handler (checkout.session.completed, subscription.updated/deleted, invoice.paid), referral system
 - **YouTube Analyzer** — fetch video stats from YouTube API, generate engagement insights, feed data back to Brand Brain
 - **Feedback** — submit feedback and earn 1 free script credit
+- **App shell + sidebar** — SidebarProvider layout with 6 navigation items, Clerk UserButton
+- **Brand Brain page** — form with name, tone, niche, about, boundaries fields, character counts
+- **Create page** — tabbed interface with 4 modes (Own Idea, Trend, Series, Remix), all forms wired to tRPC
+- **Script view** — scene-by-scene display, regeneration (1x), inline editing, text-to-speech, teleprompter (4 speeds), copy, caption generation, voiceover, delete
+- **Library page** — All + Series tabs, script cards with platform/mode badges, YouTube Analyzer dialog
+- **Billing page** — plan display, usage meter with progress bar, Stripe checkout, credits purchase, customer portal, referral system
+- **Help page** — FAQ accordion, support contact, feedback form (+1 free credit)
+- **Settings page** — Clerk UserProfile, legal links
+- **Auth pages** — Clerk sign-in/sign-up with route groups
 
 ---
 
@@ -99,14 +111,15 @@ ContentOS Studio is a full content production system and creator operating syste
 
 ### Phase 3: Frontend
 
-- [ ] Layout + navigation (app shell, sidebar, responsive)
-- [ ] Brand Brain page (forms, onboarding)
-- [ ] Create page (four modes)
-- [ ] Script view (scenes, regen, editing, speech, teleprompter, export)
-- [ ] Library page (All, Series, YouTube analyzer)
-- [ ] Billing page
-- [ ] Help page
-- [ ] Settings page
+- [x] Layout + navigation (sidebar with SidebarProvider, route groups for dashboard + auth)
+- [x] Brand Brain page (form with all fields, character counts)
+- [x] Create page (4 tabbed modes: Own Idea, Trend, Series, Remix)
+- [x] Script view (scenes, regen 1x, inline edit, TTS, teleprompter 4 speeds, copy, caption, voiceover)
+- [x] Library page (All + Series tabs, script cards, YouTube Analyzer dialog)
+- [x] Billing page (plan display, usage meter, Stripe checkout, credits, portal, referrals)
+- [x] Help page (FAQ accordion, support, feedback form +1 credit)
+- [x] Settings page (Clerk UserProfile, legal links)
+- [x] Auth pages (Clerk sign-in/sign-up)
 
 ### Phase 4: Polish
 
@@ -151,8 +164,9 @@ Vercel
 
 ## Changelog
 
-| Date       | Change                                                                                                          |
-| ---------- | --------------------------------------------------------------------------------------------------------------- |
-| 2026-04-10 | Initial APP-OVERVIEW.md created from v2 spec                                                                    |
-| 2026-04-10 | Phase 1 complete: Next.js 16, shadcn/ui, Drizzle schema, Clerk + Arcjet middleware, tRPC v11, Prettier + ESLint |
+| Date       | Change                                                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-10 | Initial APP-OVERVIEW.md created from v2 spec                                                                              |
+| 2026-04-10 | Phase 1 complete: Next.js 16, shadcn/ui, Drizzle schema, Clerk + Arcjet middleware, tRPC v11, Prettier + ESLint           |
 | 2026-04-10 | Phase 2 complete: Brand Brain, Script gen engine, Script CRUD, Series, Trends, Remix, Billing, YouTube Analyzer, Feedback |
+| 2026-04-10 | Phase 3 complete: All frontend pages built — layout, Brand Brain, Create (4 modes), Script view, Library, Billing, Help, Settings, Auth |
