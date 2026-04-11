@@ -56,13 +56,114 @@ interface CaptionParams {
   brandBrain: BrandBrainContext;
 }
 
+// ─── Niche labels and deep knowledge ───
+
+const NICHE_LABELS: Record<string, string> = {
+  tech_gadgets: "Tech & Gadgets",
+  business_finance: "Business & Finance",
+  health_fitness: "Health & Fitness",
+  lifestyle_vlogs: "Lifestyle & Vlogs",
+  beauty_fashion: "Beauty & Fashion",
+  food_cooking: "Food & Cooking",
+  education_self_improvement: "Education & Self-Improvement",
+  entertainment_pop_culture: "Entertainment & Pop Culture",
+  creative_art: "Creative & Art",
+  travel_adventure: "Travel & Adventure",
+};
+
+const NICHE_KNOWLEDGE: Record<string, string> = {
+  tech_gadgets: `- Audience expects specs, benchmarks, and comparisons — vague claims kill credibility
+- "Is it worth it?" framing outperforms pure feature lists
+- Show the product in use, not just on a table — text on screen should show prices, specs, comparisons
+- Competitor mentions drive engagement (comments argue = algorithm boost)
+- Unboxing hooks still work but must be fast — skip the packaging, get to the reveal
+- Common sub-niches: smartphones, laptops, smart home, apps, AI tools, gaming, productivity software`,
+
+  business_finance: `- Audience is skeptical by default — lead with credibility (personal results, specific numbers)
+- "How I made £X" outperforms "How to make £X" — personal proof beats generic advice
+- Break down complex concepts with analogies, not jargon
+- Text on screen: show the numbers, the math, the receipts — financial content lives on proof
+- Income/results screenshots drive saves (people screenshot these)
+- Hot takes on popular finance advice drive comments
+- Common sub-niches: side hustles, investing, crypto, personal finance, entrepreneurship, real estate`,
+
+  health_fitness: `- Transformation content (before/after) is still the #1 hook in fitness
+- Form demonstrations need multiple angles — text on screen labels muscle groups
+- "What I eat in a day" format has massive engagement but needs a unique angle now
+- Myth-busting ("Stop doing X exercise") outperforms "Do this exercise"
+- Cite research casually ("a 2024 study showed...") — health audience values evidence
+- Avoid medical claims — boundaries should prevent diagnosing or prescribing
+- Common sub-niches: gym, nutrition, yoga, mental health, running, weight loss, sports`,
+
+  lifestyle_vlogs: `- Authenticity is the product — polished ≠ relatable in this niche
+- Routine content works but needs a personality hook — "my weird 5am routine" not "my morning routine"
+- Aesthetic matters more here than in tech — visual quality, colour grading, music sync
+- "Day in the life" needs a story arc — just a sequence of activities is boring
+- Organization/minimalism content drives the highest saves in this niche
+- Relationship content drives comments but can attract negativity — know the line
+- Common sub-niches: routines, minimalism, apartment tours, productivity, relationships, moving`,
+
+  beauty_fashion: `- "Get ready with me" (GRWM) format has the highest completion rate in beauty
+- Product names and prices MUST be on screen — this audience screenshots for shopping
+- Dupes and alternatives drive massive engagement ("£5 version of the £50 product")
+- Tutorial steps must be numbered and visible — viewers save these
+- Honest negative reviews build more trust than all-positive reviews
+- Trend commentary ("is this trend worth it?") outperforms just following the trend
+- Common sub-niches: makeup, skincare, hauls, styling, grooming, nail art`,
+
+  food_cooking: `- Show the finished dish in the first frame — food content is visual-first
+- Recipe steps must be on screen (ingredient amounts, times, temperatures)
+- ASMR cooking sounds boost retention — mention "sizzle" and "crunch" in scripts
+- "Easy" and "under 15 minutes" in hooks drive the most clicks in food
+- Controversial food opinions drive engagement ("pineapple on pizza is actually...")
+- Ingredient close-ups and plating shots should be noted as text-on-screen cues
+- Common sub-niches: recipes, meal prep, restaurant reviews, food science, baking, mukbang`,
+
+  education_self_improvement: `- "Things I wish I knew" and "mistakes I made" frames outperform straight advice
+- Book summaries and study techniques have the highest save rates in this niche
+- Numbered lists with clear takeaways — this audience values actionable content
+- Use analogies and visual metaphors — abstract concepts need concrete anchors
+- Credibility comes from showing the journey, not claiming expertise
+- Text on screen should be the key framework/model/steps — people screenshot these
+- Common sub-niches: study tips, language learning, book reviews, productivity, career, habits`,
+
+  entertainment_pop_culture: `- Speed matters — be first with takes on new releases, celebrity news, viral moments
+- Hot takes must be genuinely surprising — lukewarm opinions get ignored
+- Reaction-style content needs authentic emotion — performative reactions read as fake
+- Deep dives and "hidden details" drive rewatches (people check your claims)
+- Meme format literacy is mandatory — know current templates and reference them
+- Commentary should add insight the audience hasn't thought of, not just recap events
+- Common sub-niches: movies, TV, music, celebrity, internet culture, memes, gaming`,
+
+  creative_art: `- Process content outperforms finished work — show the creation, not just the result
+- Speed-up timelapse with narration is the dominant format
+- Tools and materials must be labelled on screen — this audience wants to try it themselves
+- "How I made this" hooks better than "look what I made" — process > product
+- Before/after transitions are the #1 hook in art content
+- Music choice matters more here — the audio aesthetic is part of the brand
+- Common sub-niches: digital art, photography, music production, design, DIY, crafts, writing`,
+
+  travel_adventure: `- Location reveal in the first frame — travel is visual-first
+- Budget breakdowns drive the highest saves ("I spent £X for 5 days in Y")
+- "Hidden gems" and "locals only" framing outperforms mainstream tourist content
+- Drone shots and wide establishing shots should be noted as text-on-screen cues
+- Practical tips (visa, transport, scams to avoid) > aesthetic montages for engagement
+- Compare expectations vs reality — authenticity builds trust in travel
+- Common sub-niches: budget travel, luxury, van life, hiking, cultural, food travel, solo travel`,
+};
+
 // ─── Brand Brain → system context (cached separately) ───
 
 export function formatBrandBrain(bb: BrandBrainContext): string {
   const parts: string[] = [];
   if (bb.name) parts.push(`Creator: ${bb.name}`);
   if (bb.tone) parts.push(`Voice: ${bb.tone}`);
-  if (bb.niche) parts.push(`Niche: ${bb.niche}`);
+  if (bb.niche) {
+    const nicheLabel = NICHE_LABELS[bb.niche] || bb.niche;
+    const nicheKnowledge = NICHE_KNOWLEDGE[bb.niche] || "";
+    parts.push(`Niche: ${nicheLabel}`);
+    if (nicheKnowledge) parts.push(`Niche context:\n${nicheKnowledge}`);
+  }
   if (bb.about) parts.push(`Background: ${bb.about}`);
   if (bb.boundaries)
     parts.push(`Hard boundaries (NEVER violate these): ${bb.boundaries}`);
@@ -180,15 +281,41 @@ Structure: Verdict First → Evidence
 - Text on screen: product name, price, specs, rating — the stuff viewers screenshot`,
 };
 
+// ─── Length-specific scene guides ───
+
+const LENGTH_GUIDES: Record<string, string> = {
+  "15s": `15-SECOND VIDEO:
+- Maximum 3 scenes (hook + value + cta). Every word must earn its place.
+- ~35-45 words total spoken. That's 2-3 short sentences.
+- Hook must land in 1 second. No context scene — go straight to value.
+- Text on screen carries 50%+ of the message — essential for sound-off
+- This is a single-punch format: one idea, one takeaway, done.`,
+
+  "30s": `30-SECOND VIDEO:
+- 3-5 scenes. Room for a proper hook + build + payoff.
+- ~70-90 words total spoken. About 5-7 sentences.
+- Hook: 2 seconds. Context: 5 seconds. Value + proof: 15 seconds. CTA: 5 seconds.
+- Most versatile length — works for all formats and platforms.
+- Text on screen should add context at each scene transition.`,
+
+  "60s": `60-SECOND VIDEO:
+- 5-8 scenes. Full scene structure available.
+- ~150-180 words total spoken. About 10-15 sentences.
+- You have room for storytelling, multiple proof points, and a real build.
+- Pacing variation is critical at this length — uniform delivery loses viewers at 30s mark.
+- Add a "pivot" or surprise at the midpoint (~30s) to retain viewers through the second half.
+- Text on screen should update every 5-7 seconds.`,
+};
+
 // ─── Pace instructions ───
 
 const PACE_INSTRUCTIONS: Record<string, string> = {
-  slow: `SLOW PACE:
-- 120-140 words per minute. Deliberate, measured delivery.
-- Longer pauses between ideas — let each point breathe
-- Fewer scenes (3-4 for short content). More depth per scene.
-- Works best for: emotional content, trust-building, luxury/aspiration
-- Each scene can be 3-5 sentences. Take time with details.`,
+  normal: `NORMAL PACE:
+- 130-150 words per minute. Natural, comfortable delivery.
+- Steady rhythm — clear and easy to follow
+- Standard scene count (3-5). Good depth per scene.
+- Works best for: educational content, reviews, vlogs, explainers
+- Natural pauses between ideas. Conversational, not rushed.`,
 
   medium: `MEDIUM PACE:
 - 150-170 words per minute. Conversational energy.
@@ -258,15 +385,18 @@ export function buildScriptPrompt(params: ScriptGenerationParams): string {
     PLATFORM_RULES[params.platform] || PLATFORM_RULES.youtube;
   const formatTemplate =
     FORMAT_TEMPLATES[params.format] || FORMAT_TEMPLATES.talking_head;
+  const lengthGuide = LENGTH_GUIDES[params.length] || LENGTH_GUIDES["30s"];
   const paceGuide = PACE_INSTRUCTIONS[params.pace] || PACE_INSTRUCTIONS.medium;
 
   return `Write a script about: ${params.topicDescription}
 
-Target: ${params.platform} | ${params.length} | ${params.pace} pace | ${params.format}
+Target: ${params.platform} | ${params.length} video | ${params.pace} pace | ${params.format}
 
 ${platformRules}
 
 ${formatTemplate}
+
+${lengthGuide}
 
 ${paceGuide}
 
@@ -287,6 +417,7 @@ export function buildSeriesEpisodePrompt(params: SeriesEpisodeParams): string {
     PLATFORM_RULES[params.platform] || PLATFORM_RULES.youtube;
   const formatTemplate =
     FORMAT_TEMPLATES[params.format] || FORMAT_TEMPLATES.talking_head;
+  const lengthGuide = LENGTH_GUIDES[params.length] || LENGTH_GUIDES["30s"];
   const paceGuide = PACE_INSTRUCTIONS[params.pace] || PACE_INSTRUCTIONS.medium;
   const modeInstruction =
     CONNECTION_MODE_INSTRUCTIONS[params.connectionMode] || "";
@@ -310,6 +441,8 @@ ${modeInstruction}
 ${platformRules}
 
 ${formatTemplate}
+
+${lengthGuide}
 
 ${paceGuide}
 

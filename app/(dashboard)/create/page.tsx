@@ -32,8 +32,14 @@ const PLATFORMS = [
   { value: "instagram", label: "Instagram" },
 ];
 
+const LENGTHS = [
+  { value: "15s", label: "15s" },
+  { value: "30s", label: "30s" },
+  { value: "60s", label: "60s" },
+];
+
 const PACES = [
-  { value: "slow", label: "Slow" },
+  { value: "normal", label: "Normal" },
   { value: "medium", label: "Medium" },
   { value: "fast", label: "Fast" },
 ];
@@ -73,7 +79,8 @@ const CONNECTION_MODES = [
 ];
 
 type Platform = "youtube" | "tiktok" | "instagram";
-type Pace = "slow" | "medium" | "fast";
+type VideoLength = "15s" | "30s" | "60s";
+type Pace = "normal" | "medium" | "fast";
 type Format =
   | "talking_head"
   | "listicle"
@@ -91,7 +98,7 @@ export default function CreatePage() {
   const [ownIdea, setOwnIdea] = useState({
     topicDescription: "",
     platform: "" as Platform | "",
-    length: "",
+    length: "" as VideoLength | "",
     pace: "" as Pace | "",
     format: "" as Format | "",
   });
@@ -112,7 +119,7 @@ export default function CreatePage() {
   );
 
   const [trendForm, setTrendForm] = useState({
-    length: "",
+    length: "" as VideoLength | "",
     pace: "" as Pace | "",
     format: "" as Format | "",
   });
@@ -136,7 +143,7 @@ export default function CreatePage() {
     connectionMode: "",
     platform: "" as Platform | "",
     topicDescription: "",
-    length: "",
+    length: "" as VideoLength | "",
     pace: "" as Pace | "",
     format: "" as Format | "",
   });
@@ -223,7 +230,12 @@ export default function CreatePage() {
                 className="space-y-4"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (!ownIdea.platform || !ownIdea.pace || !ownIdea.format)
+                  if (
+                    !ownIdea.platform ||
+                    !ownIdea.length ||
+                    !ownIdea.pace ||
+                    !ownIdea.format
+                  )
                     return;
                   createMutation.mutate({
                     topicDescription: ownIdea.topicDescription,
@@ -275,36 +287,44 @@ export default function CreatePage() {
 
                   <div className="space-y-2">
                     <Label>Length</Label>
-                    <Input
-                      placeholder="e.g. 30s, 60s, 3min"
-                      value={ownIdea.length}
-                      onChange={(e) =>
-                        setOwnIdea((p) => ({ ...p, length: e.target.value }))
-                      }
-                      required
-                    />
+                    <div className="flex gap-2">
+                      {LENGTHS.map((l) => (
+                        <button
+                          key={l.value}
+                          type="button"
+                          onClick={() =>
+                            setOwnIdea((p) => ({
+                              ...p,
+                              length: l.value as VideoLength,
+                            }))
+                          }
+                          className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${ownIdea.length === l.value ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"}`}
+                        >
+                          {l.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label>Pace</Label>
-                    <Select
-                      value={ownIdea.pace}
-                      onValueChange={(v) =>
-                        setOwnIdea((p) => ({ ...p, pace: v as Pace }))
-                      }
-                      required
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select pace" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {PACES.map((p) => (
-                          <SelectItem key={p.value} value={p.value}>
-                            {p.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      {PACES.map((p) => (
+                        <button
+                          key={p.value}
+                          type="button"
+                          onClick={() =>
+                            setOwnIdea((prev) => ({
+                              ...prev,
+                              pace: p.value as Pace,
+                            }))
+                          }
+                          className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${ownIdea.pace === p.value ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"}`}
+                        >
+                          {p.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -399,36 +419,46 @@ export default function CreatePage() {
                 </p>
               )}
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-4">
                 <div className="space-y-2">
                   <Label>Length</Label>
-                  <Input
-                    placeholder="e.g. 60s"
-                    value={trendForm.length}
-                    onChange={(e) =>
-                      setTrendForm((p) => ({ ...p, length: e.target.value }))
-                    }
-                  />
+                  <div className="flex gap-2">
+                    {LENGTHS.map((l) => (
+                      <button
+                        key={l.value}
+                        type="button"
+                        onClick={() =>
+                          setTrendForm((p) => ({
+                            ...p,
+                            length: l.value as VideoLength,
+                          }))
+                        }
+                        className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${trendForm.length === l.value ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"}`}
+                      >
+                        {l.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Pace</Label>
-                  <Select
-                    value={trendForm.pace}
-                    onValueChange={(v) =>
-                      setTrendForm((p) => ({ ...p, pace: v as Pace }))
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Pace" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {PACES.map((p) => (
-                        <SelectItem key={p.value} value={p.value}>
-                          {p.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    {PACES.map((p) => (
+                      <button
+                        key={p.value}
+                        type="button"
+                        onClick={() =>
+                          setTrendForm((prev) => ({
+                            ...prev,
+                            pace: p.value as Pace,
+                          }))
+                        }
+                        className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${trendForm.pace === p.value ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"}`}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <Label>Format</Label>
@@ -597,12 +627,17 @@ export default function CreatePage() {
                   className="space-y-4"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    if (!seriesForm.pace || !seriesForm.format) return;
+                    if (
+                      !seriesForm.length ||
+                      !seriesForm.pace ||
+                      !seriesForm.format
+                    )
+                      return;
                     generateEpisodeMutation.mutate({
                       seriesId: seriesForm.seriesId,
                       topicDescription: seriesForm.topicDescription,
                       length: seriesForm.length,
-                      pace: seriesForm.pace as Pace,
+                      pace: seriesForm.pace,
                       format: seriesForm.format as Format,
                     });
                   }}
@@ -622,40 +657,46 @@ export default function CreatePage() {
                       required
                     />
                   </div>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <Label>Length</Label>
-                      <Input
-                        placeholder="e.g. 60s"
-                        value={seriesForm.length}
-                        onChange={(e) =>
-                          setSeriesForm((p) => ({
-                            ...p,
-                            length: e.target.value,
-                          }))
-                        }
-                        required
-                      />
+                      <div className="flex gap-2">
+                        {LENGTHS.map((l) => (
+                          <button
+                            key={l.value}
+                            type="button"
+                            onClick={() =>
+                              setSeriesForm((p) => ({
+                                ...p,
+                                length: l.value as VideoLength,
+                              }))
+                            }
+                            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${seriesForm.length === l.value ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"}`}
+                          >
+                            {l.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label>Pace</Label>
-                      <Select
-                        value={seriesForm.pace}
-                        onValueChange={(v) =>
-                          setSeriesForm((p) => ({ ...p, pace: v as Pace }))
-                        }
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Pace" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {PACES.map((p) => (
-                            <SelectItem key={p.value} value={p.value}>
-                              {p.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="flex gap-2">
+                        {PACES.map((p) => (
+                          <button
+                            key={p.value}
+                            type="button"
+                            onClick={() =>
+                              setSeriesForm((prev) => ({
+                                ...prev,
+                                pace: p.value as Pace,
+                              }))
+                            }
+                            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${seriesForm.pace === p.value ? "bg-primary text-primary-foreground" : "bg-secondary hover:bg-accent"}`}
+                          >
+                            {p.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label>Format</Label>

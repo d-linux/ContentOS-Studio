@@ -79,8 +79,8 @@ export const seriesRouter = router({
       z.object({
         seriesId: z.string().uuid(),
         topicDescription: z.string().min(1).max(2000),
-        length: z.string().min(1).max(50),
-        pace: z.enum(["slow", "medium", "fast"]),
+        length: z.enum(["15s", "30s", "60s"]),
+        pace: z.enum(["normal", "medium", "fast"]),
         format: z.enum([
           "talking_head",
           "listicle",

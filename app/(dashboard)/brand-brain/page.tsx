@@ -15,7 +15,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Brain, Save } from "lucide-react";
+
+const NICHES = [
+  { value: "tech_gadgets", label: "Tech & Gadgets" },
+  { value: "business_finance", label: "Business & Finance" },
+  { value: "health_fitness", label: "Health & Fitness" },
+  { value: "lifestyle_vlogs", label: "Lifestyle & Vlogs" },
+  { value: "beauty_fashion", label: "Beauty & Fashion" },
+  { value: "food_cooking", label: "Food & Cooking" },
+  {
+    value: "education_self_improvement",
+    label: "Education & Self-Improvement",
+  },
+  { value: "entertainment_pop_culture", label: "Entertainment & Pop Culture" },
+  { value: "creative_art", label: "Creative & Art" },
+  { value: "travel_adventure", label: "Travel & Adventure" },
+] as const;
 
 export default function BrandBrainPage() {
   const trpc = useTRPC();
@@ -66,7 +83,7 @@ export default function BrandBrainPage() {
     upsertMutation.mutate({
       name: form.name || undefined,
       tone: form.tone || undefined,
-      niche: form.niche || undefined,
+      niche: (form.niche as (typeof NICHES)[number]["value"]) || undefined,
       about: form.about || undefined,
       boundaries: form.boundaries || undefined,
     });
@@ -129,16 +146,27 @@ export default function BrandBrainPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="niche">Niche</Label>
-              <Input
-                id="niche"
-                placeholder="e.g. tech reviews, fitness, cooking, finance"
-                value={form.niche}
-                onChange={(e) =>
-                  setForm((prev) => ({ ...prev, niche: e.target.value }))
-                }
-                maxLength={500}
-              />
+              <Label>Niche</Label>
+              <div className="flex flex-wrap gap-2">
+                {NICHES.map((niche) => (
+                  <button
+                    key={niche.value}
+                    type="button"
+                    onClick={() =>
+                      setForm((prev) => ({ ...prev, niche: niche.value }))
+                    }
+                  >
+                    <Badge
+                      variant={
+                        form.niche === niche.value ? "default" : "outline"
+                      }
+                      className="cursor-pointer px-3 py-1.5 text-sm"
+                    >
+                      {niche.label}
+                    </Badge>
+                  </button>
+                ))}
+              </div>
             </div>
           </CardContent>
         </Card>

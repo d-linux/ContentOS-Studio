@@ -33,7 +33,22 @@ export const connectionModeEnum = pgEnum("connection_mode", [
   "response",
 ]);
 
-export const paceEnum = pgEnum("pace", ["slow", "medium", "fast"]);
+export const videoLengthEnum = pgEnum("video_length", ["15s", "30s", "60s"]);
+
+export const paceEnum = pgEnum("pace", ["normal", "medium", "fast"]);
+
+export const nicheEnum = pgEnum("niche", [
+  "tech_gadgets",
+  "business_finance",
+  "health_fitness",
+  "lifestyle_vlogs",
+  "beauty_fashion",
+  "food_cooking",
+  "education_self_improvement",
+  "entertainment_pop_culture",
+  "creative_art",
+  "travel_adventure",
+]);
 
 export const formatEnum = pgEnum("format", [
   "talking_head",
@@ -77,7 +92,7 @@ export const brandBrains = pgTable("brand_brains", {
     .unique(),
   name: text("name"),
   tone: text("tone"),
-  niche: text("niche"),
+  niche: nicheEnum("niche"),
   about: text("about"),
   boundaries: text("boundaries"),
   youtubeData: jsonb("youtube_data"),
@@ -113,7 +128,7 @@ export const scripts = pgTable("scripts", {
   title: text("title").notNull(),
   mode: scriptModeEnum("mode").notNull(),
   platform: platformEnum("platform").notNull(),
-  length: text("length"),
+  length: videoLengthEnum("length"),
   pace: paceEnum("pace"),
   format: formatEnum("format"),
   topicDescription: text("topic_description"),

@@ -197,3 +197,4 @@ Vercel
 | 2026-04-11 | Marketing pages: landing page (hero, features, Brand Brain, script preview, pricing, FAQ), demo page (YouTube embed + guided tour), links page, blog placeholder, (marketing) route group with header/footer |
 | 2026-04-11 | AI engine v1: prompt caching, system prompt separation, anti-AI-slop rules |
 | 2026-04-11 | AI engine v2: Sonnet 4.5 for quality, viral framework (7 hook patterns, format-specific templates for all 7 formats, platform algorithm rules, pace-aware WPM, 10-point humanizer), complete prompt rewrite |
+| 2026-04-11 | Form + niche overhaul: length now 15s/30s/60s buttons, pace now Normal/Medium/Fast buttons, niche now 10 predefined options with deep AI knowledge per niche, length-specific scene count + word count guides |

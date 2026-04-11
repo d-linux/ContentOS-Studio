@@ -6,7 +6,20 @@ import { brandBrains, users } from "@/db/schema";
 const brandBrainInput = z.object({
   name: z.string().max(100).optional(),
   tone: z.string().max(500).optional(),
-  niche: z.string().max(500).optional(),
+  niche: z
+    .enum([
+      "tech_gadgets",
+      "business_finance",
+      "health_fitness",
+      "lifestyle_vlogs",
+      "beauty_fashion",
+      "food_cooking",
+      "education_self_improvement",
+      "entertainment_pop_culture",
+      "creative_art",
+      "travel_adventure",
+    ])
+    .optional(),
   about: z.string().max(2000).optional(),
   boundaries: z.string().max(1000).optional(),
 });
