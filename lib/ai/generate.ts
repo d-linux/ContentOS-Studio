@@ -11,8 +11,8 @@ import {
 
 const anthropic = new Anthropic();
 
-// Haiku 4.5 — fastest model, structured output capable, sub-10s generations
-const MODEL = "claude-haiku-4-5-20251001";
+// Sonnet 4.5 — best quality for creative writing, prompt caching keeps speed reasonable
+const MODEL = "claude-sonnet-4-5-20250929";
 
 // System prompt cached for repeat requests — saves ~30% latency
 const SCRIPT_SYSTEM_PROMPT: Anthropic.Messages.TextBlockParam[] = [
