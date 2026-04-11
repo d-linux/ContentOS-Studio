@@ -13,6 +13,15 @@ export const remixRouter = router({
       z.object({
         sourceScriptId: z.string().uuid(),
         targetPlatform: z.enum(["youtube", "tiktok", "instagram"]),
+        targetFormat: z.enum([
+          "talking_head",
+          "listicle",
+          "storytime",
+          "tutorial",
+          "skit",
+          "vlog",
+          "review",
+        ]).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -82,6 +91,7 @@ export const remixRouter = router({
           })),
         },
         targetPlatform: input.targetPlatform,
+        targetFormat: input.targetFormat,
       });
 
       const aiOutput = await generateScript(formatBrandBrain(brandBrain), prompt);

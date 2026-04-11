@@ -37,11 +37,13 @@ interface RemixParams {
     scenes: Array<{ type: string; content: string }>;
   };
   targetPlatform: string;
+  targetFormat?: string;
 }
 
 interface SceneRegenerationParams {
   brandBrain: BrandBrainContext;
   scriptTitle: string;
+  topicDescription: string | null;
   platform: string;
   length: string | null;
   pace: string | null;
@@ -290,18 +292,24 @@ export function buildRemixPrompt(params: RemixParams): string {
     .map((s) => `[${s.type}]: ${s.content}`)
     .join("\n");
 
+  const targetFormatKey = params.targetFormat || params.sourceScript.format || "talking_head";
+  const targetFormatGuide = FORMAT[targetFormatKey] || "";
+
   return `Remix this ${params.sourceScript.platform} script for ${params.targetPlatform}. Creative reimagining — same voice, different delivery.
 
-Source: "${params.sourceScript.title}" (${params.sourceScript.platform}, ${params.sourceScript.format || "talking head"})
+Source: "${params.sourceScript.title}" (${params.sourceScript.platform}, ${params.sourceScript.format?.replace(/_/g, " ") || "talking head"})
 ${scenes}
 
 Target platform:
 ${PLATFORM[params.targetPlatform] || PLATFORM.youtube}
 
+Target format: ${targetFormatKey.replace(/_/g, " ")}
+${targetFormatGuide}
+
 KEEP: core insight, creator's EXACT voice, value proposition.
 CHANGE: structure, pacing, hook style, length, CTA — everything platform-specific.
 Voice must be IDENTICAL across platforms. Only delivery changes.
-Adjust scene count to target platform's optimal length.
+Restructure scenes to match the target format's architecture.
 
 Each scene: "content" (spoken, same voice as source) + "textOnScreen" (visual, adds info).
 Title: catchy, under 60 characters, platform-native.`;
@@ -324,7 +332,7 @@ export function buildSceneRegenerationPrompt(
     .join(" | ");
 
   return `Rewrite scene ${params.scene.order} (${params.scene.type}) of "${params.scriptTitle}" (${params.platform}${constraints ? `, ${constraints}` : ""}).
-
+${params.topicDescription ? `\nScript topic: ${params.topicDescription}\nSTAY ON TOPIC — the regenerated scene must serve this topic directly.\n` : ""}
 Current version (throw away — start fresh):
 "${params.scene.content}"
 

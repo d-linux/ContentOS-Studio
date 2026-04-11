@@ -244,6 +244,7 @@ export const scriptRouter = router({
       const prompt = buildSceneRegenerationPrompt({
         brandBrain: brandBrain ?? {},
         scriptTitle: script.title,
+        topicDescription: script.topicDescription,
         platform: script.platform,
         length: script.length,
         pace: script.pace,

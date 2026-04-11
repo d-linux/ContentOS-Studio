@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Lightbulb, TrendingUp, Layers, Shuffle, Loader2 } from "lucide-react";
+import { useScriptStream } from "@/hooks/use-script-stream";
 
 const PLATFORMS = [
   { value: "youtube", label: "YouTube" },
@@ -94,6 +95,9 @@ export default function CreatePage() {
   const router = useRouter();
   const trpc = useTRPC();
 
+  // ─── Streaming generation ──────────────────
+  const scriptStream = useScriptStream();
+
   // ─── Own Idea form ──────────────────────────
   const [ownIdea, setOwnIdea] = useState({
     topicDescription: "",
@@ -102,16 +106,6 @@ export default function CreatePage() {
     pace: "" as Pace | "",
     format: "" as Format | "",
   });
-
-  const createMutation = useMutation(
-    trpc.script.create.mutationOptions({
-      onSuccess: (script) => {
-        toast.success("Script generated!");
-        router.push(`/script/${script.id}`);
-      },
-      onError: (error) => toast.error(error.message),
-    })
-  );
 
   // ─── Trend ──────────────────────────────────
   const { data: trends, isLoading: trendsLoading } = useQuery(
@@ -237,13 +231,22 @@ export default function CreatePage() {
                     !ownIdea.format
                   )
                     return;
-                  createMutation.mutate({
-                    topicDescription: ownIdea.topicDescription,
-                    platform: ownIdea.platform,
-                    length: ownIdea.length,
-                    pace: ownIdea.pace,
-                    format: ownIdea.format,
-                  });
+                  scriptStream
+                    .generate({
+                      topicDescription: ownIdea.topicDescription,
+                      platform: ownIdea.platform,
+                      length: ownIdea.length,
+                      pace: ownIdea.pace,
+                      format: ownIdea.format,
+                    })
+                    .then((scriptId) => {
+                      if (scriptId) {
+                        toast.success("Script generated!");
+                        router.push(`/script/${scriptId}`);
+                      } else if (scriptStream.error) {
+                        toast.error(scriptStream.error);
+                      }
+                    });
                 }}
               >
                 <div className="space-y-2">
@@ -353,13 +356,30 @@ export default function CreatePage() {
                 <Button
                   type="submit"
                   className="w-full"
-                  disabled={createMutation.isPending}
+                  disabled={scriptStream.isStreaming}
                 >
-                  {createMutation.isPending && (
+                  {scriptStream.isStreaming && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  Generate Script
+                  {scriptStream.isStreaming
+                    ? "Generating..."
+                    : "Generate Script"}
                 </Button>
+
+                {/* Streaming preview */}
+                {scriptStream.isStreaming && scriptStream.streamedText && (
+                  <div className="bg-muted mt-4 max-h-60 overflow-y-auto rounded-lg border p-4">
+                    <div className="mb-2 flex items-center gap-2">
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                      <span className="text-muted-foreground text-xs font-medium">
+                        Writing your script...
+                      </span>
+                    </div>
+                    <pre className="text-sm whitespace-pre-wrap font-mono">
+                      {scriptStream.streamedText}
+                    </pre>
+                  </div>
+                )}
               </form>
             </CardContent>
           </Card>
