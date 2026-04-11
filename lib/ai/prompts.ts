@@ -32,6 +32,8 @@ interface RemixParams {
   sourceScript: {
     title: string;
     platform: string;
+    format: string | null;
+    length: string | null;
     scenes: Array<{ type: string; content: string }>;
   };
   targetPlatform: string;
@@ -41,6 +43,9 @@ interface SceneRegenerationParams {
   brandBrain: BrandBrainContext;
   scriptTitle: string;
   platform: string;
+  length: string | null;
+  pace: string | null;
+  format: string | null;
   scene: {
     type: string;
     content: string;
@@ -52,14 +57,14 @@ interface SceneRegenerationParams {
 interface CaptionParams {
   scriptTitle: string;
   platform: string;
+  format: string | null;
+  length: string | null;
   scenes: Array<{ type: string; content: string }>;
   brandBrain: BrandBrainContext;
 }
 
 // ═══════════════════════════════════════════════════════════
 // NICHE INTELLIGENCE
-// Deep knowledge per niche — audience psychology, proof types,
-// content patterns, what makes THIS audience share
 // ═══════════════════════════════════════════════════════════
 
 const NICHE_LABELS: Record<string, string> = {
@@ -75,432 +80,230 @@ const NICHE_LABELS: Record<string, string> = {
   travel_adventure: "Travel & Adventure",
 };
 
-const NICHE_INTELLIGENCE: Record<string, string> = {
-  tech_gadgets: `TECH & GADGETS audience psychology:
-- They share to look smart. Give them insider knowledge they can pass on.
-- Credibility = specifics. "Battery lasts 6 hours of screen-on time" beats "great battery life"
-- Comparison hooks outperform feature lists: "X vs Y" creates debate = comments = algorithm boost
-- This audience SCREENSHOTS specs. Text-on-screen should show: price, specs, benchmark scores
-- Unboxing hooks must be fast — skip packaging, get to the reveal in under 3 seconds
-- Hot takes on popular tech ("the iPhone is overrated for THIS reason") drive 3x more shares
-- Sub-niches: smartphones, laptops, smart home, apps, AI tools, gaming hardware, productivity software`,
-
-  business_finance: `BUSINESS & FINANCE audience psychology:
-- This audience is skeptical by default. Lead with PROOF — personal results, specific numbers, receipts
-- "How I made £X" outperforms "How to make £X" — personal proof beats generic advice by 3x
-- Income screenshots and result breakdowns are the #1 saved content type in this niche
-- Break complex concepts with everyday analogies — jargon kills completion rates
-- Text-on-screen: show the math, the numbers, the revenue charts — financial content lives on proof
-- Hot takes on popular finance advice drive comments ("Stop saving money. Here's why.")
-- Sub-niches: side hustles, investing, crypto, personal finance, entrepreneurship, real estate`,
-
-  health_fitness: `HEALTH & FITNESS audience psychology:
-- Transformation content (before/after) is the #1 hook — viewers share aspirational results
-- "Stop doing X exercise" outperforms "Do this exercise" by 2:1 — negative framing triggers self-check
-- Cite research casually: "a 2024 study found..." — this audience values evidence but not lectures
-- Form demonstrations need text-on-screen labelling muscle groups and common mistakes
-- "What I eat in a day" needs a unique angle NOW — the format is saturated without personality
-- Myth-busting drives the highest comment rates in fitness ("You don't need 8 glasses of water")
-- Sub-niches: gym, nutrition, yoga, mental health, running, weight loss, sports, supplements`,
-
-  lifestyle_vlogs: `LIFESTYLE & VLOGS audience psychology:
-- Authenticity IS the product. Polished ≠ relatable here. Raw moments > perfect moments
-- "My weird 5am routine" hooks 3x better than "My morning routine" — personality in the title
-- Organisation and minimalism content gets the highest SAVE rates — people bookmark for later
-- Aesthetic matters more here than tech/business — colour grading, music sync, visual rhythm
-- "Day in the life" needs a STORY ARC — just a sequence of activities is boring, there must be tension
-- Relationship and roommate content drives comments but polarises — know the line
-- Sub-niches: routines, minimalism, apartment tours, productivity, relationships, moving, organisation`,
-
-  beauty_fashion: `BEAUTY & FASHION audience psychology:
-- "Get ready with me" (GRWM) has the highest completion rate of ANY format in beauty
-- Product names and PRICES must be on screen — this audience screenshots for shopping lists
-- "£5 dupe for the £50 product" hooks drive massive engagement — everyone loves a deal
-- Tutorial steps MUST be numbered and visible — viewers save these at 4x the rate of other content
-- Honest negative reviews build MORE trust than all-positive: "I wanted to love this but..."
-- Trend commentary ("is this trend actually worth it?") outperforms just following the trend
-- Sub-niches: makeup tutorials, skincare, hauls, styling, grooming, nail art, fashion commentary`,
-
-  food_cooking: `FOOD & COOKING audience psychology:
-- SHOW THE FINISHED DISH IN FRAME 1. Food content is visual-first — the result IS the hook
-- Recipe steps on screen (amounts, temperatures, times) drive saves at 5x the average
-- ASMR cooking sounds boost retention — script should note sizzle/crunch cues for text-on-screen
-- "Easy" and "under 15 minutes" in hooks drive the most clicks in all of food content
-- Ingredient close-ups and plating shots noted in text-on-screen create professional feel
-- Controversial food opinions drive shares: "Pineapple on pizza is actually genius. Fight me."
-- Sub-niches: recipes, meal prep, restaurant reviews, food science, baking, mukbang, budget meals`,
-
-  education_self_improvement: `EDUCATION & SELF-IMPROVEMENT audience psychology:
-- "Things I wish I knew" and "mistakes I made" frames outperform straight advice by 2x
-- This audience SAVES more than any other niche — give them actionable frameworks they'll return to
-- Numbered lists with clear takeaways get 2.5x more saves than unstructured content
-- Use analogies and visual metaphors — abstract concepts need concrete anchors to stick
-- Text-on-screen should be THE framework/model/steps — people screenshot these
-- Credibility comes from showing the journey, not claiming expertise: "I failed 3 times before..."
-- Sub-niches: study tips, languages, book summaries, productivity, career advice, habits, psychology`,
-
-  entertainment_pop_culture: `ENTERTAINMENT & POP CULTURE audience psychology:
-- SPEED matters. Be first with takes on new releases, celebrity news, viral moments
-- Hot takes must be genuinely surprising — lukewarm opinions get zero engagement in this niche
-- Reaction content needs AUTHENTIC emotion — performative reactions read as fake instantly
-- "Hidden details you missed" drives rewatches — people come back to verify your claims
-- Meme literacy is mandatory — reference current formats or you lose credibility
-- Commentary should add INSIGHT the audience hasn't considered, not just recap events
-- Sub-niches: movies, TV shows, music, celebrity culture, internet culture, memes, gaming news`,
-
-  creative_art: `CREATIVE & ART audience psychology:
-- PROCESS content outperforms finished work — show the creation, not just the result
-- Speed-up timelapse with narration is the dominant format — the transformation IS the hook
-- Before/after transitions are the #1 hook in all creative content
-- Tools and materials MUST be labelled on screen — this audience wants to try it themselves
-- "How I made this" hooks 2x better than "Look what I made" — process > product
-- Music choice matters more here than any other niche — audio aesthetic is part of the brand
-- Sub-niches: digital art, photography, music production, design, DIY, crafts, writing, filmmaking`,
-
-  travel_adventure: `TRAVEL & ADVENTURE audience psychology:
-- Location reveal in FRAME 1 — travel is the most visual-first niche
-- Budget breakdowns drive the highest saves: "I spent £X for 5 days in Y — here's the breakdown"
-- "Hidden gems" and "locals only" framing outperforms mainstream tourist content 3x
-- Practical tips (visa, transport, scams to avoid) get MORE engagement than aesthetic montages
-- Expectations vs reality comparisons build trust — authenticity wins in travel
-- Drone shots and wide establishing shots should be noted as text-on-screen cues
-- Sub-niches: budget travel, luxury, van life, hiking, cultural experiences, food travel, solo travel`,
+const NICHE_INTEL: Record<string, string> = {
+  tech_gadgets: `TECH audience: shares to look smart. Credibility = specifics ("6hr battery" not "great battery"). Comparison hooks create debate = comments. Text-on-screen: price, specs, benchmarks. Hot takes on popular tech drive 3x shares.`,
+  business_finance: `FINANCE audience: skeptical by default. Lead with PROOF — numbers, receipts, personal results. "How I made £X" beats "How to make £X" by 3x. Text-on-screen: show the math. Income screenshots = most saved content.`,
+  health_fitness: `FITNESS audience: transformation hooks are #1. "Stop doing X" beats "Do X" 2:1. Cite research casually. Text-on-screen: muscle groups, form cues. Myth-busting drives highest comments.`,
+  lifestyle_vlogs: `LIFESTYLE audience: authenticity IS the product. "My weird 5am routine" hooks 3x better than "My morning routine." Organisation content = highest saves. Day-in-the-life needs a story arc, not just a sequence.`,
+  beauty_fashion: `BEAUTY audience: GRWM = highest completion rate. Product names + PRICES must be on screen (they screenshot). "£5 dupe for £50 product" hooks drive massive engagement. Tutorials with numbered steps get 4x saves.`,
+  food_cooking: `FOOD audience: SHOW FINISHED DISH IN FRAME 1. Recipe steps on screen = 5x saves. "Easy" and "under 15 min" hooks get most clicks. Note sizzle/crunch ASMR cues. Controversial food takes drive shares.`,
+  education_self_improvement: `EDUCATION audience: "Things I wish I knew" frames beat straight advice 2x. Highest SAVE rate of any niche. Numbered lists with clear takeaways = 2.5x saves. Text-on-screen: the framework/steps — people screenshot these.`,
+  entertainment_pop_culture: `ENTERTAINMENT audience: SPEED matters — be first with takes. Hot takes must be genuinely surprising. "Hidden details you missed" drives rewatches. Commentary must add INSIGHT, not just recap.`,
+  creative_art: `ART audience: PROCESS > finished work. Timelapse with narration is dominant format. Before/after transitions = #1 hook. Tools and materials MUST be labelled. "How I made this" hooks 2x better than "Look what I made."`,
+  travel_adventure: `TRAVEL audience: location reveal in FRAME 1. Budget breakdowns = highest saves ("£X for 5 days in Y"). "Hidden gems" framing outperforms tourist content 3x. Practical tips > aesthetic montages for engagement.`,
 };
 
 // ═══════════════════════════════════════════════════════════
-// BRAND BRAIN → VOICE DNA (cached as system context)
-// This is the creator's identity — amplified, not replaced
+// BRAND BRAIN → VOICE DNA
 // ═══════════════════════════════════════════════════════════
 
 export function formatBrandBrain(bb: BrandBrainContext): string {
   const parts: string[] = [];
-
   if (bb.name) parts.push(`Creator: ${bb.name}`);
-
-  if (bb.tone) {
-    parts.push(`Voice DNA: ${bb.tone}`);
-    parts.push(
-      `AMPLIFICATION RULE: Take this tone and push it 20% further. If they're sarcastic, be sharper. If they're energetic, be more electric. If they're calm, be more precise. You are their voice on their BEST day.`
-    );
-  }
-
+  if (bb.tone) parts.push(`Voice: ${bb.tone}\nAMPLIFY this tone 20%. If sarcastic, be sharper. If energetic, be more electric. If chill, be more precise. Their best day, every time.`);
   if (bb.niche) {
-    const nicheLabel = NICHE_LABELS[bb.niche] || bb.niche;
-    const nicheIntel = NICHE_INTELLIGENCE[bb.niche] || "";
-    parts.push(`Niche: ${nicheLabel}`);
-    if (nicheIntel) parts.push(nicheIntel);
+    parts.push(`Niche: ${NICHE_LABELS[bb.niche] || bb.niche}`);
+    if (NICHE_INTEL[bb.niche]) parts.push(NICHE_INTEL[bb.niche]);
   }
-
-  if (bb.about) {
-    parts.push(`About this creator (USE THIS — it's what makes them unique):\n${bb.about}`);
-  }
-
-  if (bb.boundaries) {
-    parts.push(`HARD BOUNDARIES — violating ANY of these makes the script unusable:\n${bb.boundaries}`);
-  }
-
-  if (bb.youtubeData) {
-    parts.push(
-      `YouTube performance data — use this to double down on what works and avoid what doesn't:\n${JSON.stringify(bb.youtubeData)}`
-    );
-  }
-
-  return parts.length > 0
-    ? `## CREATOR VOICE DNA\n${parts.join("\n\n")}`
-    : "No creator profile yet — write in a natural, conversational voice with genuine personality.";
+  if (bb.about) parts.push(`About (USE THIS — it's what makes them unique, reference their experiences naturally):\n${bb.about}`);
+  if (bb.boundaries) parts.push(`BOUNDARIES (violating ANY = unusable script):\n${bb.boundaries}`);
+  if (bb.youtubeData) parts.push(`YouTube data — double down on what works:\n${JSON.stringify(bb.youtubeData)}`);
+  return parts.length > 0 ? parts.join("\n\n") : "No creator profile. Write naturally with genuine personality.";
 }
 
 // ═══════════════════════════════════════════════════════════
 // PLATFORM INTELLIGENCE
-// Algorithm rules, audience behavior, optimal patterns
 // ═══════════════════════════════════════════════════════════
 
-const PLATFORM_INTELLIGENCE: Record<string, string> = {
-  youtube: `YOUTUBE SHORTS intelligence:
-- Algorithm weights: watch time > engagement rate > click-through
-- Sweet spot: 30-58 seconds. Under 20s has low impression ceiling unless replay rate is extreme
-- 65% of viewers who watch 3 seconds continue for 10+ seconds — the 3-second rule is real
-- Slightly higher production value than TikTok — YouTube viewers expect structure
-- Searchable titles matter — YouTube Shorts appear in search results
-- Speak at 160-180 WPM — faster than conversation, slower than auctioneer
-- Visual change every 2-3 seconds to maintain retention
-- End CTA should tie back to the video's value, not generic "like and subscribe"
-- Loop mechanic: ending that connects to opening gets replays, and since March 2025 replays count as additional views`,
-
-  tiktok: `TIKTOK intelligence:
-- Algorithm weights: average % watched > shares > comments > likes
-- Sweet spot: 20-45 seconds. A 30s video at 90% completion CRUSHES a 60s at 50%
-- Raw > polished. Content that looks "native" outperforms produced content by 60%
-- Start MID-THOUGHT. First word must hook. Not "so" or "okay" — enter the conversation already happening
-- 85%+ viewed with sound off initially — text-on-screen in first frame is MANDATORY
-- 20% higher energy than normal conversation. Edit out ALL dead air.
-- Trending sounds boost distribution — note sound cue suggestions in text-on-screen
-- No formal CTAs — end on cliffhanger, hot take, or "try this and tell me what happens"
-- Loop mechanic: seamless ending that makes replay feel like continuation, not restart`,
-
-  instagram: `INSTAGRAM REELS intelligence:
-- Algorithm weights: shares > saves > comments > watch time (Instagram uniquely prioritises sharing)
-- Sweet spot: 15-30 seconds. Over 60s gets deprioritised in Explore and Reels tab
-- Polished but personal — like a well-edited voice note to someone you respect
-- Visual-first: text-on-screen does 50%+ of the storytelling
-- Hook with bold claim or relatable frustration — "nobody talks about this" energy
-- Concise — say it in 3 words if you can, not 10
-- Caption can be micro-blog length (2-5 sentences) — Instagram factors in time reading captions
-- CTA for saves: "save this for later" — saves are weighted heavily
-- CTA for shares: "send this to someone who needs it" — shares are weighted MOST heavily`,
+const PLATFORM: Record<string, string> = {
+  youtube: `YOUTUBE: algorithm = watch time > engagement. Sweet spot 30-58s. Speak 160-180 WPM. Visual change every 2-3s. Loop endings get replays (count as views since March 2025).`,
+  tiktok: `TIKTOK: algorithm = avg % watched > shares > comments. Sweet spot 20-45s. Raw > polished (60% better). Start mid-thought. 85%+ viewed sound-off — text-on-screen frame 1 mandatory. 20% higher energy than normal.`,
+  instagram: `INSTAGRAM REELS: algorithm = shares > saves > comments > watch time. Sweet spot 15-30s. Over 60s deprioritised. Polished but personal. CTA for saves ("save this") or shares ("send to someone who needs this") — shares weighted MOST.`,
 };
 
 // ═══════════════════════════════════════════════════════════
-// FORMAT STRUCTURE TEMPLATES
-// Scene-level architecture per format type
+// FORMAT STRUCTURES WITH EXAMPLES
+// Each format has a structural pattern AND a real example
 // ═══════════════════════════════════════════════════════════
 
-const FORMAT_STRUCTURES: Record<string, string> = {
+const FORMAT: Record<string, string> = {
   talking_head: `TALKING HEAD — Cold Open to Payoff:
-- Direct-to-camera energy. Write as if speaking to ONE person, not an audience.
-- Variable pacing: speed through supporting details, slow down dramatically for the key insight
-- Add natural verbal texture: "look", "real talk", "here's what nobody says" — max once each
-- ONE deliberate pause/beat per script — silence is a tool, note it as "[BEAT]" in the script
-- Text-on-screen: key stat, pull quote, or emphasis word — never transcript
-- The payoff scene should feel like a mic drop — the single insight that makes everything click`,
+Write to ONE person, not an audience. Variable pacing: fast through support, slow for key insight. One "[BEAT]" pause. Text-on-screen: key stat or emphasis, never transcript.
+
+EXAMPLE (30s YouTube, business niche, medium pace):
+Hook: "I fired my biggest client last month. Best decision I ever made."
+Context: "They were paying me four grand a month. But every single project took twice as long because of their revision process."
+Value: "I replaced that revenue in two weeks. Three smaller clients, less stress, more creative control."
+CTA: "If you've got a client that makes you dread Mondays — you already know what to do."`,
 
   listicle: `LISTICLE — Rapid Fire:
-- Show count on screen: "1/5", "2/5" — this is a progress bar that keeps viewers watching
-- ORDER MATTERS: second-best item first (hook), weakest in middle (buried), best item last (payoff that drives share)
-- Each item: claim → ONE specific proof point → transition. No filler.
-- Transitions between items: visual wipe cue in text-on-screen, never just "and next..."
-- Max 5 items for 30s or under, max 7 for 60s
-- Text-on-screen: item name/number as label + a detail the voice skips`,
+Count on screen ("1/5"). Order: second-best first, weakest middle, best last. Each item: claim → one proof → transition. Max 5 items for ≤30s, 7 for 60s.
+
+EXAMPLE (30s TikTok, education niche, fast pace):
+Hook: "Three study methods that actually work. Forget everything else."
+Value 1: "Spaced repetition. Quiz yourself on day 1, day 3, day 7. Your brain literally can't forget."
+Value 2: "Active recall. Close the book. Write what you remember. The struggle IS the learning."
+Value 3: "Feynman technique. Explain it like you're teaching a five-year-old. If you can't simplify it, you don't know it."
+CTA: "Save this. Finals week you will thank me."`,
 
   storytime: `STORYTIME — Tension Loop:
-- START AT THE CLIMAX: "I got fired on my first day. Here's what happened."
-- PRESENT TENSE always: "So I walk in and..." not "So I walked in and..." — immediacy
-- Each beat MUST raise stakes — if tension plateaus for even one scene, viewers leave
-- Include a "complication" — "And then it got worse" or "But that's not even the worst part"
-- Specific details make it real: "the Tesco on Park Road" not "a shop", "my boss Karen" not "my boss"
-- End with twist or earned lesson — the payoff MUST justify the time investment
-- Text-on-screen: location labels, time stamps ("2 hours later"), reaction cues ("😐"), internal thoughts`,
+Start at the climax. Present tense always ("So I walk in..."). Each beat raises stakes. Include a complication. Specific details make it real. End with twist or earned lesson.
+
+EXAMPLE (60s YouTube, lifestyle niche, medium pace):
+Hook: "My landlord just showed up at my door with a police officer. I haven't done anything wrong."
+Context: "So three weeks ago I put up a Ring camera because packages keep disappearing. Normal, right?"
+Value: "The camera caught my neighbour. Not stealing packages — she was rearranging my welcome mat every morning at 6am. Every. Single. Morning."
+Proof: "I showed the footage to my landlord. He said it's not a police matter. But then the neighbour complained that my camera violates her privacy."
+Payoff: "So now I'm apparently the problem. For catching someone touching my property. On camera. At my own front door."
+CTA: "Am I insane or is this the most unhinged neighbour situation you've ever heard? Comment below."`,
 
   tutorial: `TUTORIAL — Inverted Pyramid:
-- SHOW THE RESULT FIRST: before-and-after in the first 2 seconds. "Here's what we're making"
-- Number every step on screen — visual progress indicator
-- One tutorial = one outcome. NEVER combine tutorials.
-- Speed up tedious parts: note "[2x SPEED]" for repetitive actions
-- Each step: what to do → why it matters (one sentence max) → what it should look like
-- Text-on-screen: step numbers, tool names, measurements, settings — the reference material
-- Tutorials get the HIGHEST save rate of all formats — optimise for "I'll need this later" saves`,
+Show result first (2 seconds). Number every step on screen. One tutorial = one outcome. "[2x SPEED]" for repetitive parts. Text-on-screen: step numbers, tools, measurements.
+
+EXAMPLE (30s Instagram, creative niche, normal pace):
+Hook: "This is a £0 logo. I made it in 4 minutes. Here's how."
+Value 1: "Step one. Open Canva. Pick the circle element. Make it your brand colour."
+Value 2: "Step two. Add your initials in Outfit font. Bold. Centre it."
+Value 3: "Step three. Export as PNG with transparent background. Done."
+CTA: "Save this. Next time someone quotes you £500 for a logo, try this first."`,
 
   skit: `SKIT — Setup → Subversion:
-- Setup MUST be under 5 seconds — comedy has the lowest patience threshold of any format
-- Write for VISUAL comedy that works sound-off — physical gag or text reveal, not just verbal
-- SUBVERT the expected punchline. The audience is pattern-matching — break their prediction
-- Add one detail that only catches on REWATCH — this drives replay value and sharing ("did you see...")
-- Keep under 30 seconds — comedy has diminishing returns past this
-- Text-on-screen: character labels, location, internal thoughts — the second layer of comedy
-- Test: would someone send this to a friend with "😂😂😂"? If not, the punchline isn't sharp enough`,
+Setup under 5 seconds. Visual comedy > verbal (works sound-off). Subvert the expected punchline. Add one rewatch detail. Under 30 seconds. Test: would someone send this with "😂"?
+
+EXAMPLE (15s TikTok, entertainment niche, fast pace):
+Hook: "POV: you're a productivity guru explaining your morning routine"
+Value: "[speaking to camera with intense eye contact] 'I wake up at 4am. Cold shower. Journal for 30 minutes. Meditate. Review my goals. Protein shake.' [cuts to showing phone screen time: 6 hours TikTok] '...and then I get to work.'"
+CTA: [no CTA — the punchline IS the ending, loop back to the intense eye contact]`,
 
   vlog: `VLOG — Journey Arc:
-- Open with the most interesting moment, then "let me rewind" — don't start chronologically
-- Show real environments, real situations — vlog energy is "I'm bringing you along"
-- Mix direct-to-camera with "overheard" narration style
-- Include ONE genuine unscripted-feeling reaction or vulnerability moment
-- Time stamps and location labels on screen build narrative structure
-- End with a reflection that ties the day/experience to a bigger theme
-- Text-on-screen: times, locations, inner monologue captions, emoji reactions`,
+Open with most interesting moment, then rewind. Real environments. Mix direct-to-camera with overheard narration. One vulnerability moment. Time stamps + locations on screen.
+
+EXAMPLE (60s YouTube, travel niche, normal pace):
+Hook: "I just got scammed. In the most polite way possible. Let me show you."
+Context: "So we're in Marrakech. Day two. And our riad host offers to 'help us navigate the medina.'"
+Value: "Forty-five minutes later we've visited six shops we didn't ask for. Every shop owner 'just happens to be his friend.' And somehow I'm holding a £200 rug."
+Proof: "The tour was 'free.' But I spent £300 on things I didn't want because the social pressure is UNREAL. Every tourist does this."
+Payoff: "Lesson: when someone offers to help you navigate for free, the product is you."
+CTA: "If you're going to Morocco, save this. Seriously."`,
 
   review: `REVIEW — Verdict First:
-- LEAD WITH THE VERDICT: "This is the best/worst X I've tried. Here's why."
-- Never save the conclusion for the end — that's a blog post, not a video
-- Compare to something the audience already knows: "It's like X but better at Y"
-- Be SPECIFIC: "battery lasted 6 hours of continuous use" not "great battery life"
-- Include ONE genuine criticism even in positive reviews — credibility depends on it
-- Text-on-screen: product name, price, specs, rating score — stuff viewers screenshot
-- Use a rating system that's consistent — creates expectation for series potential`,
+Lead with verdict ("best/worst X I've tried"). Compare to known reference. Be SPECIFIC. One genuine criticism even in positive reviews. Consistent rating system. Text-on-screen: name, price, specs.
+
+EXAMPLE (30s YouTube, tech niche, medium pace):
+Hook: "This is the best keyboard I've ever used. And I've tested forty-three."
+Value: "The Keychron Q1 Pro. Seventy-five percent layout. Gasket mount. And it sounds like this — [note: typing ASMR sound cue]."
+Proof: "I've been using it for three months now. Daily. The only thing I don't love is the stock keycaps — they get shiny after about six weeks."
+CTA: "If you type for a living, this is the one. Link in the description. And no, this isn't sponsored — I paid for it."`,
 };
 
 // ═══════════════════════════════════════════════════════════
 // LENGTH INTELLIGENCE
-// Scene count, word count, timing, pacing constraints
 // ═══════════════════════════════════════════════════════════
 
-const LENGTH_INTELLIGENCE: Record<string, string> = {
-  "15s": `15-SECOND VIDEO constraints:
-- MAX 3 scenes. Hook + value + cta. Every single word must earn its place.
-- ~30-40 words total spoken. That's 2-3 SHORT sentences.
-- Hook lands in 1 second. Skip context — go straight from hook to value.
-- Text-on-screen carries 60%+ of the message — essential for sound-off viewers
-- This is a SINGLE-PUNCH format: one idea, one takeaway, done. No build-up.
-- LOOP MECHANIC IS CRITICAL at this length — ending must flow into beginning seamlessly
-- Think of it as a billboard that talks`,
-
-  "30s": `30-SECOND VIDEO constraints:
-- 3-5 scenes. Room for hook + build + payoff.
-- ~65-85 words total spoken. About 5-7 sentences.
-- Timing: hook 2s → context 5s → value+proof 15s → CTA 5s
-- Most versatile length — works for every format and platform
-- Text-on-screen should update at each scene transition
-- LOOP MECHANIC: ending should callback to opening for replay value
-- A "retention checkpoint" at 15s — give a mini-payoff or tease what's coming to hold viewers through the second half`,
-
-  "60s": `60-SECOND VIDEO constraints:
-- 5-8 scenes. Full scene architecture available.
-- ~140-170 words total spoken. About 10-14 sentences.
-- You have room for real storytelling, multiple proof points, and a genuine build
-- CRITICAL: add a PIVOT at the 30-second mark ("But here's what nobody tells you") — viewers drop off at the midpoint without a re-hook
-- Pacing variation is essential at this length — uniform delivery loses viewers at 25-30s
-- Text-on-screen should update every 5-7 seconds
-- A "big event or small success" every 15-20 seconds to maintain momentum
-- End with open loop or satisfying punchline — at 60s the ending determines share rate`,
+const LENGTH: Record<string, string> = {
+  "15s": `15s VIDEO: Max 3 scenes. ~30-40 words spoken. Hook in 1 second. Skip context — hook → value → cta. Text-on-screen carries 60%+. Single-punch format. LOOP ENDING is critical — seamless replay.`,
+  "30s": `30s VIDEO: 3-5 scenes. ~65-85 words spoken. Hook 2s → context 5s → value+proof 15s → CTA 5s. Retention checkpoint at 15s (mini-payoff or tease). Loop ending for replay.`,
+  "60s": `60s VIDEO: 5-8 scenes. ~140-170 words spoken. Full scene architecture. PIVOT at 30s mark ("But here's what nobody tells you") — viewers drop off at midpoint without re-hook. Pacing variation essential. "Big event" every 15-20 seconds.`,
 };
 
 // ═══════════════════════════════════════════════════════════
 // PACE INTELLIGENCE
-// WPM targets, energy levels, scene density
 // ═══════════════════════════════════════════════════════════
 
-const PACE_INTELLIGENCE: Record<string, string> = {
-  normal: `NORMAL PACE:
-- 130-150 words per minute. Natural, unhurried delivery.
-- Steady conversational rhythm — like explaining to a friend over coffee
-- Let ideas breathe. Natural pauses between thoughts.
-- Standard scene density. Good depth per scene — 2-4 sentences each.
-- Best for: educational, reviews, vlogs, trust-building content`,
-
-  medium: `MEDIUM PACE:
-- 150-170 words per minute. Engaged, conversational energy.
-- Speed up through supporting details, slow down for key insights — the CONTRAST creates emphasis
-- Mix sentence lengths: long setup → short punchy payoff
-- Moderate scene density. Balance depth with momentum.
-- This is the "creator talking to camera with coffee" energy — alert but not rushed`,
-
-  fast: `FAST PACE:
-- 170-190 words per minute. High energy, rapid delivery.
-- Cut ALL dead air. Jump between ideas. No pauses except for dramatic effect.
-- Short sentences. Fragments. Staccato rhythm. Machine gun delivery.
-- High scene density — more scenes, less depth each. Rapid fire information.
-- Every sentence must EARN its place — if it doesn't add value, cut it.
-- Best for: listicles, trends, "things you didn't know", hype content
-- 20% more energy than normal conversation. If it feels normal, it's too slow.`,
+const PACE: Record<string, string> = {
+  normal: `NORMAL PACE: 130-150 WPM. Conversational. Let ideas breathe. 2-4 sentences per scene. Best for: education, reviews, vlogs, trust-building.`,
+  medium: `MEDIUM PACE: 150-170 WPM. Engaged energy. Speed up through support, slow down for key insights — the CONTRAST creates emphasis. Mix sentence lengths.`,
+  fast: `FAST PACE: 170-190 WPM. High energy. Cut ALL dead air. Fragments. Staccato. Every sentence earns its place or gets cut. 20% more energy than normal conversation. Best for: listicles, trends, hype content.`,
 };
 
 // ═══════════════════════════════════════════════════════════
-// CONNECTION MODE INTELLIGENCE (for series)
+// SERIES CONNECTION MODES
 // ═══════════════════════════════════════════════════════════
 
-const CONNECTION_MODE_INTELLIGENCE: Record<string, string> = {
-  sequential:
-    "SEQUENTIAL series: each episode continues the story. End with cliffhanger or open question. Episode 2+ starts with a one-line callback (not a recap — a RE-HOOK that works for new viewers too). The series should feel like chapters of a book you can't put down.",
-  anthology:
-    "ANTHOLOGY series: same theme, standalone episodes. Each works alone but feels part of a collection. VARY the angle, structure, and hook pattern between episodes — repetitive anthology = dead series. Think: same universe, different stories.",
-  running_format:
-    "RUNNING FORMAT series: same recognizable structure, fresh content. Think of it like a TV show segment — the frame stays, the content changes. Lean into the ritual. Viewers should know the format within 2 seconds and feel comfortable in it.",
-  journey:
-    "JOURNEY series: track REAL progress. Reference specific past milestones naturally: 'remember when I said X? Here's what happened.' Show genuine growth, setbacks included — manufactured arcs read as fake. Each episode is a checkpoint.",
-  response:
-    "RESPONSE series: scripts that feel like replies to the audience. Reference real comment patterns: 'a lot of you asked about X' or 'someone said Y and honestly...' Make viewers feel HEARD. This builds community — the audience becomes co-creators of the series.",
+const CONNECTION_MODE: Record<string, string> = {
+  sequential: "SEQUENTIAL: each episode continues the story. End with cliffhanger. Episode 2+ starts with one-line callback (not recap — re-hook that works for new viewers too).",
+  anthology: "ANTHOLOGY: same theme, standalone episodes. VARY angle, structure, hook pattern between episodes. Same universe, different stories.",
+  running_format: "RUNNING FORMAT: same recognizable structure, fresh content. The frame stays, content changes. Viewers know what to expect within 2 seconds.",
+  journey: "JOURNEY: track REAL progress. Reference past milestones naturally. Show genuine growth, setbacks included. Each episode = checkpoint.",
+  response: "RESPONSE: scripts feel like replies to audience. Reference real comment patterns. Make viewers feel HEARD. Audience becomes co-creators.",
 };
 
 // ═══════════════════════════════════════════════════════════
 // PROMPT BUILDERS
-// Each builder produces a self-contained prompt that works
-// WITH the system prompt and voice DNA. They are all aware
-// of what the other builders produce — same voice, same
-// quality, same standards.
+// All builders share: system prompt, voice DNA, examples.
+// Cross-builder context: each builder receives relevant
+// metadata from other builders' outputs.
 // ═══════════════════════════════════════════════════════════
 
 export function buildScriptPrompt(params: ScriptGenerationParams): string {
-  const platform =
-    PLATFORM_INTELLIGENCE[params.platform] || PLATFORM_INTELLIGENCE.youtube;
-  const format =
-    FORMAT_STRUCTURES[params.format] || FORMAT_STRUCTURES.talking_head;
-  const length = LENGTH_INTELLIGENCE[params.length] || LENGTH_INTELLIGENCE["30s"];
-  const pace = PACE_INTELLIGENCE[params.pace] || PACE_INTELLIGENCE.medium;
+  return `Write a ${params.format.replace(/_/g, " ")} script about: ${params.topicDescription}
 
-  return `Write a ${params.format.replace("_", " ")} script about: ${params.topicDescription}
+${PLATFORM[params.platform] || PLATFORM.youtube}
+${FORMAT[params.format] || FORMAT.talking_head}
+${LENGTH[params.length] || LENGTH["30s"]}
+${PACE[params.pace] || PACE.medium}
 
-${platform}
-
-${format}
-
-${length}
-
-${pace}
-
-SCENE STRUCTURE:
-- Available types: hook, context, value, proof, payoff, cta
-- You DON'T need all 6 — a 15s TikTok might only need hook + value + cta. Merge or skip types if the flow is better without them.
-- Each scene returns "content" (what the creator SAYS — spoken words, 6th grade reading level, their voice amplified) and "textOnScreen" (visual text that ADDS info the voice doesn't say)
-- Title: catchy, under 60 characters, would make someone tap in a library view`;
+Scene types: hook, context, value, proof, payoff, cta. Not all required — use what serves the content. Min 3, max 8.
+Each scene: "content" (spoken, creator's voice, 6th grade level) + "textOnScreen" (adds info voice skips).
+Title: catchy, under 60 characters.`;
 }
 
 export function buildSeriesEpisodePrompt(params: SeriesEpisodeParams): string {
-  const platform =
-    PLATFORM_INTELLIGENCE[params.platform] || PLATFORM_INTELLIGENCE.youtube;
-  const format =
-    FORMAT_STRUCTURES[params.format] || FORMAT_STRUCTURES.talking_head;
-  const length = LENGTH_INTELLIGENCE[params.length] || LENGTH_INTELLIGENCE["30s"];
-  const pace = PACE_INTELLIGENCE[params.pace] || PACE_INTELLIGENCE.medium;
-  const mode =
-    CONNECTION_MODE_INTELLIGENCE[params.connectionMode] || "";
+  const mode = CONNECTION_MODE[params.connectionMode] || "";
 
+  // Compress old episodes — full scenes for last 2, summaries for earlier
   const previousContext =
     params.previousEpisodes.length > 0
       ? params.previousEpisodes
-          .map(
-            (ep) =>
-              `Ep ${ep.episodeNumber} "${ep.title}": ${ep.scenes.map((s) => `[${s.type}] ${s.content}`).join(" | ")}`
-          )
+          .map((ep) => {
+            if (ep.episodeNumber >= params.episodeNumber - 2) {
+              // Recent episodes: full scene content for voice matching
+              return `Ep ${ep.episodeNumber} "${ep.title}": ${ep.scenes.map((s) => `[${s.type}] ${s.content}`).join(" | ")}`;
+            }
+            // Older episodes: compressed summary for context without bloat
+            return `Ep ${ep.episodeNumber} "${ep.title}" (summary: ${ep.scenes[0]?.content.slice(0, 80)}...)`;
+          })
           .join("\n")
-      : "First episode — establish the tone, hook style, and structure that will carry the series. Make it strong enough that viewers want episode 2.";
+      : "First episode — establish the tone and hook style that carries the series.";
 
   return `Write episode ${params.episodeNumber} of "${params.seriesTitle}".
 Topic: ${params.topicDescription}
 
 ${mode}
+${PLATFORM[params.platform] || PLATFORM.youtube}
+${FORMAT[params.format] || FORMAT.talking_head}
+${LENGTH[params.length] || LENGTH["30s"]}
+${PACE[params.pace] || PACE.medium}
 
-${platform}
-
-${format}
-
-${length}
-
-${pace}
-
-## Previous episodes (for continuity — reference ONLY where it serves the story)
+Previous episodes:
 ${previousContext}
 
-CONSISTENCY RULE: This episode must feel like it was written by the SAME person as previous episodes. Same voice, same energy, same structural patterns. A viewer should recognise the creator instantly.
+CONSISTENCY: same voice, same energy, same structural patterns as previous episodes. A viewer recognises this creator instantly.
 
-Each scene: "content" (spoken, creator's voice) + "textOnScreen" (visual, adds info).
+Scene types: hook, context, value, proof, payoff, cta. Min 3, max 8.
+Each scene: "content" (spoken) + "textOnScreen" (visual, adds info).
 Title: catchy, under 60 characters.`;
 }
 
 export function buildRemixPrompt(params: RemixParams): string {
-  const originalScenes = params.sourceScript.scenes
+  const scenes = params.sourceScript.scenes
     .map((s) => `[${s.type}]: ${s.content}`)
     .join("\n");
 
-  const targetPlatform =
-    PLATFORM_INTELLIGENCE[params.targetPlatform] ||
-    PLATFORM_INTELLIGENCE.youtube;
+  return `Remix this ${params.sourceScript.platform} script for ${params.targetPlatform}. Creative reimagining — same voice, different delivery.
 
-  return `REMIX this script for ${params.targetPlatform}. This is a CREATIVE REIMAGINING — same creator, different platform.
+Source: "${params.sourceScript.title}" (${params.sourceScript.platform}, ${params.sourceScript.format || "talking head"})
+${scenes}
 
-## Source script (${params.sourceScript.platform})
-"${params.sourceScript.title}"
-${originalScenes}
+Target platform:
+${PLATFORM[params.targetPlatform] || PLATFORM.youtube}
 
-## Target: ${params.targetPlatform}
-${targetPlatform}
+KEEP: core insight, creator's EXACT voice, value proposition.
+CHANGE: structure, pacing, hook style, length, CTA — everything platform-specific.
+Voice must be IDENTICAL across platforms. Only delivery changes.
+Adjust scene count to target platform's optimal length.
 
-REMIX RULES:
-- KEEP: the core insight, the creator's EXACT voice and personality, the value proposition
-- CHANGE: structure, pacing, hook style, length, CTA style — everything that makes a ${params.sourceScript.platform} script feel wrong on ${params.targetPlatform}
-- A good remix makes someone think "this was made for ${params.targetPlatform}" — not "this was adapted"
-- The VOICE must be identical across platforms. Only the delivery changes.
-- Adjust scene count to match ${params.targetPlatform}'s optimal length
-
-Each scene: "content" (spoken, same creator voice as source) + "textOnScreen" (visual, adds info).
+Each scene: "content" (spoken, same voice as source) + "textOnScreen" (visual, adds info).
 Title: catchy, under 60 characters, platform-native.`;
 }
 
@@ -512,22 +315,25 @@ export function buildSceneRegenerationPrompt(
     .map((s) => `[Scene ${s.order} — ${s.type}]: ${s.content}`)
     .join("\n");
 
-  return `Rewrite scene ${params.scene.order} (${params.scene.type}) of "${params.scriptTitle}" (${params.platform}).
+  const constraints = [
+    params.length && `Length: ${params.length}`,
+    params.pace && `Pace: ${params.pace}`,
+    params.format && `Format: ${params.format.replace(/_/g, " ")}`,
+  ]
+    .filter(Boolean)
+    .join(" | ");
 
-## Current version (throw this away — start completely fresh)
+  return `Rewrite scene ${params.scene.order} (${params.scene.type}) of "${params.scriptTitle}" (${params.platform}${constraints ? `, ${constraints}` : ""}).
+
+Current version (throw away — start fresh):
 "${params.scene.content}"
 
-## Surrounding scenes (match their tone, energy, and voice EXACTLY)
+Surrounding scenes (match their tone, energy, voice EXACTLY):
 ${contextScenes}
 
-REGENERATION RULES:
-- Write a MEANINGFULLY DIFFERENT take. Change the angle, the example, the framing — not just synonyms.
-- The new version must feel like it was written by the SAME creator in the SAME session as the surrounding scenes
-- Keep the scene type (${params.scene.type}) and make it flow naturally between its neighbours
-- Match the energy level of surrounding scenes — don't suddenly shift from chill to hype
-- Apply the same 6th grade reading level, same spoken language style, same voice DNA
-
-Return "content" (spoken, creator's voice) and "textOnScreen" (visual, adds info — never transcript).`;
+Write a MEANINGFULLY DIFFERENT take — new angle, new example, new framing. Not synonyms.
+Must feel like same creator, same session, same energy level as surrounding scenes.
+"content" (spoken) + "textOnScreen" (visual, adds info — never transcript).`;
 }
 
 export function buildCaptionPrompt(params: CaptionParams): string {
@@ -535,42 +341,26 @@ export function buildCaptionPrompt(params: CaptionParams): string {
     .map((s) => `[${s.type}]: ${s.content}`)
     .join("\n");
 
-  const platformCaptionIntel: Record<string, string> = {
-    tiktok: `TikTok caption intel:
-- 1-2 lines max. Punchy, not polished.
-- Include keywords for TikTok search (TikTok search is growing fast — treat it like SEO)
-- Hashtags: 3-5 targeted, mix broad + niche. The 30-hashtag era is dead.
-- NO emojis unless the creator's voice uses them. Caption should match video energy.`,
+  const hookScene = params.scenes.find((s) => s.type === "hook");
+  const ctaScene = params.scenes.find((s) => s.type === "cta");
 
-    youtube: `YouTube Shorts caption intel:
-- Title matters MORE than description for Shorts. Make it searchable + clickable.
-- Keywords help because Shorts appear in YouTube search
-- Hashtags: #Shorts + 2-3 niche tags
-- Description can be longer — YouTube surfaces it in search`,
-
-    instagram: `Instagram caption intel:
-- Longer captions WORK here (2-5 sentences, micro-blog style) — Instagram factors in reading time
-- First line IS the hook — it appears in feed preview, treat it as a second headline
-- CTA for saves: "save this for later" — saves are weighted heavily in Reels algorithm
-- CTA for shares: "send this to someone who needs it" — shares weighted MOST heavily
-- Hashtags: 5-10, mix of broad reach and niche-specific. Quality > quantity.`,
+  const platformCaption: Record<string, string> = {
+    tiktok: "TikTok: 1-2 lines max. Keywords for search. 3-5 hashtags (broad + niche).",
+    youtube: "YouTube Shorts: searchable title energy. Keywords matter. #Shorts + 2-3 niche tags.",
+    instagram: "Instagram: 2-5 sentence micro-blog OK (reading time counts in algorithm). Saves + shares weighted most. 5-10 hashtags.",
   };
 
-  return `Write a caption and hashtags for "${params.scriptTitle}" on ${params.platform}.
+  return `Caption + hashtags for "${params.scriptTitle}" (${params.platform}, ${params.format?.replace(/_/g, " ") || "video"}, ${params.length || "30s"}).
 
-## The script this caption accompanies (match its voice and energy EXACTLY)
+Script content:
 ${sceneSummary}
 
-${platformCaptionIntel[params.platform] || platformCaptionIntel.youtube}
+Hook used: "${hookScene?.content || "N/A"}"
+CTA used: "${ctaScene?.content || "N/A"}"
 
-CAPTION RULES:
-- Write in the SAME voice as the script above. The caption should feel like the creator typed it right after filming.
-- First line = hook. Make someone stop scrolling in the feed.
-- Include ONE specific CTA: save prompt, share prompt, or comment prompt — pick the one that matches the content
-- Under 150 words. Punchy beats long.
+${platformCaption[params.platform] || platformCaption.youtube}
 
-HASHTAG RULES:
-- Space-separated string, 5-15 hashtags
-- Mix: broad reach + niche-specific + trending/topical
-- No spaces or special characters in hashtags`;
+MATCH the script's voice and energy exactly. Caption should feel like the creator typed it right after filming.
+First line = hook (appears in feed preview). One CTA: save, share, or comment prompt — pick what matches the content.
+Under 150 words. Hashtags: space-separated string, 5-15 tags, broad + niche mix.`;
 }

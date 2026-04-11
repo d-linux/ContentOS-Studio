@@ -74,6 +74,8 @@ export const remixRouter = router({
         sourceScript: {
           title: sourceScript.title,
           platform: sourceScript.platform,
+          format: sourceScript.format,
+          length: sourceScript.length,
           scenes: sourceScenes.map((s) => ({
             type: s.type,
             content: s.content,

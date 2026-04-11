@@ -245,6 +245,9 @@ export const scriptRouter = router({
         brandBrain: brandBrain ?? {},
         scriptTitle: script.title,
         platform: script.platform,
+        length: script.length,
+        pace: script.pace,
+        format: script.format,
         scene: { type: scene.type, content: scene.content, order: scene.order },
         allScenes: allScenes.map((s) => ({
           type: s.type,
@@ -345,6 +348,8 @@ export const scriptRouter = router({
       const prompt = buildCaptionPrompt({
         scriptTitle: script.title,
         platform: script.platform,
+        format: script.format,
+        length: script.length,
         scenes: scriptScenes.map((s) => ({
           type: s.type,
           content: s.content,
