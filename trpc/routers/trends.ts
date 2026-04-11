@@ -5,7 +5,7 @@ import { router, protectedProcedure, rateLimitedProcedure } from "../init";
 import { brandBrains, scripts, scenes, users } from "@/db/schema";
 import { getTrendingVideos } from "@/lib/youtube";
 import { generateScript } from "@/lib/ai/generate";
-import { buildScriptPrompt } from "@/lib/ai/prompts";
+import { buildScriptPrompt, formatBrandBrain } from "@/lib/ai/prompts";
 
 export const trendsRouter = router({
   // ─── Get trending topics matched to user's niche ──────
@@ -93,7 +93,7 @@ export const trendsRouter = router({
         format: input.format,
       });
 
-      const aiOutput = await generateScript(prompt);
+      const aiOutput = await generateScript(formatBrandBrain(brandBrain), prompt);
 
       const [script] = await ctx.db
         .insert(scripts)

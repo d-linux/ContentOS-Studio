@@ -56,95 +56,127 @@ interface CaptionParams {
   brandBrain: BrandBrainContext;
 }
 
-function formatBrandBrain(bb: BrandBrainContext): string {
+// ─── Brand Brain → system context (cached separately) ───
+
+export function formatBrandBrain(bb: BrandBrainContext): string {
   const parts: string[] = [];
-  if (bb.name) parts.push(`Creator name: ${bb.name}`);
-  if (bb.tone) parts.push(`Tone/voice: ${bb.tone}`);
+  if (bb.name) parts.push(`Creator: ${bb.name}`);
+  if (bb.tone) parts.push(`Voice: ${bb.tone}`);
   if (bb.niche) parts.push(`Niche: ${bb.niche}`);
-  if (bb.about) parts.push(`About: ${bb.about}`);
+  if (bb.about) parts.push(`Background: ${bb.about}`);
   if (bb.boundaries)
-    parts.push(`Boundaries (never mention/do): ${bb.boundaries}`);
+    parts.push(`Hard boundaries (NEVER violate): ${bb.boundaries}`);
   if (bb.youtubeData)
     parts.push(
-      `YouTube performance insights: ${JSON.stringify(bb.youtubeData)}`
+      `Past YouTube performance data (use to inform what works): ${JSON.stringify(bb.youtubeData)}`
     );
-  return parts.length > 0 ? parts.join("\n") : "No brand context provided yet.";
+  return parts.length > 0
+    ? `## Creator Profile\n${parts.join("\n")}`
+    : "No creator profile yet — write in a natural, conversational voice.";
 }
+
+// ─── Platform voice guides ───
+
+const PLATFORM_VOICE: Record<string, string> = {
+  youtube: `YouTube voice rules:
+- Structured but conversational — viewers chose to click, so reward that choice fast
+- First 3 seconds decide if they stay. No warm-up, no intro music description, no "hey guys"
+- Pacing: vary between quick-fire delivery and deliberate pauses for emphasis
+- Speak like you're explaining something to a smart friend, not lecturing
+- End with a CTA that ties back to the video's value, not a generic "like and subscribe"`,
+
+  tiktok: `TikTok voice rules:
+- Raw, unfiltered energy — sound like you're telling your group chat something wild
+- First word must hook. Not "so" or "okay" — start mid-thought like they walked into a conversation
+- Short punchy sentences. Fragments are fine. One idea per breath.
+- Text on screen carries half the storytelling — use it for stats, punchlines, context the voice skips
+- No formal CTAs — end on a cliffhanger, hot take, or "try this and tell me what happens"`,
+
+  instagram: `Instagram Reels voice rules:
+- Polished but personal — like a well-edited voice note to someone you respect
+- Visual-first: text on screen does heavy lifting, voice adds personality and context
+- Hook with a bold claim or relatable frustration — "nobody talks about this" energy
+- Concise — say it in 3 words if you can, not 10
+- CTA should feel like sharing insider knowledge: "save this for later" or "send this to someone who needs it"`,
+};
+
+// ─── Connection mode instructions for series ───
 
 const CONNECTION_MODE_INSTRUCTIONS: Record<string, string> = {
   sequential:
-    "This is a sequential series. Each episode continues the story linearly. Include cliffhangers at the end and 'last time' style recaps at the start (after episode 1).",
+    "SEQUENTIAL series: each episode continues the story. End with a cliffhanger or open question. Start episode 2+ with a quick callback (not a full recap — one line that re-hooks).",
   anthology:
-    "This is an anthology series. Each episode is standalone but shares the same theme. No direct story continuation needed.",
+    "ANTHOLOGY series: same theme, standalone episodes. Each works alone but feels part of a collection. Vary the angle — don't repeat the same structure.",
   running_format:
-    "This is a running format series. Each episode follows the same structure/premise but with fresh content each time. Maintain the recognizable format.",
+    "RUNNING FORMAT series: same recognizable structure every time, fresh content. Think of it like a show segment — the frame stays, the content changes. Lean into the ritual.",
   journey:
-    "This is a journey series. Track progress across episodes and reference past milestones. Show growth and evolution.",
+    "JOURNEY series: track real progress. Reference specific past milestones naturally — 'remember when I said X? Here's what happened.' Show genuine growth, not manufactured arcs.",
   response:
-    "This is a response series. Each episode should feel like a reply to audience engagement. Reference common questions, comments, or reactions.",
+    "RESPONSE series: scripts that feel like replies to the audience. Reference real patterns in comments/DMs — 'a lot of you asked about X' or 'someone said Y and honestly...' Make viewers feel heard.",
 };
 
+// ─── Prompt builders ───
+
 export function buildScriptPrompt(params: ScriptGenerationParams): string {
-  return `You are an expert short-form video scriptwriter. Generate a script based on the creator's brand and the request below.
+  const platformGuide =
+    PLATFORM_VOICE[params.platform] || PLATFORM_VOICE.youtube;
 
-## Creator Brand Context
-${formatBrandBrain(params.brandBrain)}
+  return `Write a ${params.format} script about: ${params.topicDescription}
 
-## Request
-- Topic: ${params.topicDescription}
-- Platform: ${params.platform}
-- Length: ${params.length}
-- Pace: ${params.pace}
-- Format: ${params.format}
+${platformGuide}
 
-## Instructions
-- Write in the creator's authentic voice and tone
-- Structure the script as a series of scenes: hook, context, value, proof, payoff, CTA
-- Each scene should have spoken content AND text-on-screen suggestions
-- The hook must grab attention in the first 2 seconds
-- Adapt the style and language to ${params.platform}'s culture and audience expectations
-- Respect all boundaries listed in the brand context
-- Make the script feel natural and conversational, not scripted or robotic`;
+Specs: ${params.platform} | ${params.length} | ${params.pace} pace
+
+Scene structure: hook → context → value → proof → payoff → CTA
+- You can use 3-8 scenes. Not every script needs all 6 types — merge or skip if the content flows better without forcing a scene.
+- Hook: pattern interrupt or open loop. Under 2 seconds of speech. Make them unable to scroll.
+- Context: why this matters NOW, to THIS audience. Ground it in something real.
+- Value: the actual insight, tip, or story beat. Be specific — vague advice = skip.
+- Proof: evidence, personal experience, data, or example. Show, don't tell.
+- Payoff: the "aha" moment. Land the point in a way that feels earned.
+- CTA: natural close. What should they do, think, or feel next?
+
+Each scene needs:
+- "content": what the creator actually says (spoken language, not essay prose)
+- "textOnScreen": visual text that ADDS info the voice doesn't say — stats, labels, emphasis, never a transcript`;
 }
 
 export function buildSeriesEpisodePrompt(params: SeriesEpisodeParams): string {
+  const platformGuide =
+    PLATFORM_VOICE[params.platform] || PLATFORM_VOICE.youtube;
+
+  const modeInstruction =
+    CONNECTION_MODE_INSTRUCTIONS[params.connectionMode] || "";
+
   const previousContext =
     params.previousEpisodes.length > 0
       ? params.previousEpisodes
           .map(
             (ep) =>
-              `Episode ${ep.episodeNumber} — "${ep.title}": ${ep.scenes.map((s) => s.content).join(" ")}`
+              `Ep ${ep.episodeNumber} "${ep.title}": ${ep.scenes.map((s) => `[${s.type}] ${s.content}`).join(" | ")}`
           )
-          .join("\n\n")
-      : "This is the first episode.";
+          .join("\n")
+      : "First episode — establish the tone and hook that will carry the series.";
 
-  return `You are an expert short-form video scriptwriter creating episode ${params.episodeNumber} of the series "${params.seriesTitle}".
+  return `Write episode ${params.episodeNumber} of "${params.seriesTitle}".
 
-## Creator Brand Context
-${formatBrandBrain(params.brandBrain)}
+Topic for this episode: ${params.topicDescription}
 
-## Series Info
-- Series: "${params.seriesTitle}"
-- Connection mode: ${params.connectionMode}
-- ${CONNECTION_MODE_INSTRUCTIONS[params.connectionMode] || ""}
+${modeInstruction}
 
-## Previous Episodes
+${platformGuide}
+
+Specs: ${params.platform} | ${params.length} | ${params.pace} pace | ${params.format}
+
+## Previous episodes (for continuity)
 ${previousContext}
 
-## This Episode's Request
-- Topic: ${params.topicDescription}
-- Platform: ${params.platform}
-- Length: ${params.length}
-- Pace: ${params.pace}
-- Format: ${params.format}
+Scene structure: hook → context → value → proof → payoff → CTA
+- Reference previous episodes only where it serves the story — don't force callbacks
+- Each episode must stand strong on its own while rewarding returning viewers
+- The hook should work for both new and returning viewers
 
-## Instructions
-- Write in the creator's authentic voice
-- Follow the connection mode rules strictly
-- Reference previous episodes where the connection mode requires it
-- Structure as scenes: hook, context, value, proof, payoff, CTA
-- Each scene needs spoken content AND text-on-screen
-- Respect all brand boundaries`;
+Each scene needs "content" (spoken) and "textOnScreen" (visual, never a transcript of the voice).`;
 }
 
 export function buildRemixPrompt(params: RemixParams): string {
@@ -152,27 +184,24 @@ export function buildRemixPrompt(params: RemixParams): string {
     .map((s) => `[${s.type}]: ${s.content}`)
     .join("\n");
 
-  return `You are an expert short-form video scriptwriter. Remix the following script for a completely different platform.
+  const targetGuide =
+    PLATFORM_VOICE[params.targetPlatform] || PLATFORM_VOICE.youtube;
 
-## Creator Brand Context
-${formatBrandBrain(params.brandBrain)}
+  return `Remix this script for ${params.targetPlatform}. This is NOT a copy-paste reformat — it's a creative reimagining.
 
-## Original Script
-- Title: "${params.sourceScript.title}"
-- Original platform: ${params.sourceScript.platform}
-- Scenes:
+## Source (${params.sourceScript.platform})
+"${params.sourceScript.title}"
 ${originalScenes}
 
-## Target Platform: ${params.targetPlatform}
+## Target: ${params.targetPlatform}
+${targetGuide}
 
-## Instructions
-- Create a COMPLETELY NEW script optimized for ${params.targetPlatform}'s culture, audience, and content style
-- Keep the core message/value but adapt delivery, pacing, language, and structure
-- This is NOT a copy-paste — it's a creative reimagining for a different audience
-- Write in the creator's authentic voice
-- Structure as scenes: hook, context, value, proof, payoff, CTA
-- Each scene needs spoken content AND text-on-screen
-- Respect all brand boundaries`;
+What to keep: the core insight, the creator's personality, the value proposition.
+What to change: structure, pacing, language, hook style, CTA style — everything that makes a ${params.sourceScript.platform} script feel wrong on ${params.targetPlatform}.
+
+A good remix should make someone think "this was made for ${params.targetPlatform}" — not "this was adapted from somewhere else."
+
+Each scene needs "content" (spoken) and "textOnScreen" (visual, adds info the voice doesn't say).`;
 }
 
 export function buildSceneRegenerationPrompt(
@@ -180,29 +209,20 @@ export function buildSceneRegenerationPrompt(
 ): string {
   const contextScenes = params.allScenes
     .filter((s) => s.order !== params.scene.order)
-    .map((s) => `[Scene ${s.order} - ${s.type}]: ${s.content}`)
+    .map((s) => `[Scene ${s.order} — ${s.type}]: ${s.content}`)
     .join("\n");
 
-  return `You are an expert short-form video scriptwriter. Regenerate a single scene while keeping it consistent with the rest of the script.
+  return `Rewrite scene ${params.scene.order} (${params.scene.type}) of "${params.scriptTitle}" (${params.platform}).
 
-## Creator Brand Context
-${formatBrandBrain(params.brandBrain)}
+## Current version (replace this entirely)
+"${params.scene.content}"
 
-## Script: "${params.scriptTitle}" (${params.platform})
-
-## Other Scenes (for context)
+## Surrounding scenes (for tone/flow consistency)
 ${contextScenes}
 
-## Scene to Regenerate
-- Scene ${params.scene.order} (${params.scene.type})
-- Original: "${params.scene.content}"
+Write a meaningfully different take — not a synonym swap. Change the angle, the example, or the framing. Keep the same scene type (${params.scene.type}) and make it fit naturally between the surrounding scenes.
 
-## Instructions
-- Write a fresh, different take on this ${params.scene.type} scene
-- Keep it consistent with the surrounding scenes
-- Match the creator's voice and tone
-- Provide both spoken content and text-on-screen
-- Make it meaningfully different from the original — not just a minor rewording`;
+Return "content" (spoken) and "textOnScreen" (visual, adds info — not a transcript).`;
 }
 
 export function buildCaptionPrompt(params: CaptionParams): string {
@@ -210,18 +230,19 @@ export function buildCaptionPrompt(params: CaptionParams): string {
     .map((s) => `[${s.type}]: ${s.content}`)
     .join("\n");
 
-  return `Generate a social media caption and hashtags for this ${params.platform} video.
+  return `Write a ${params.platform} caption for "${params.scriptTitle}".
 
-## Creator Brand Context
-${formatBrandBrain(params.brandBrain)}
-
-## Script: "${params.scriptTitle}"
+## Script content
 ${sceneSummary}
 
-## Instructions
-- Write a compelling caption that drives engagement (comments, shares, saves)
-- Match the tone and platform culture of ${params.platform}
-- Include a call-to-action in the caption
-- Generate 15-20 relevant hashtags (mix of broad and niche)
-- Format hashtags as a space-separated string`;
+Caption rules:
+- Open with a hook line that makes people stop scrolling and read
+- Write like the creator talks — match their voice, not marketing copy
+- Include one clear call-to-action (comment prompt, save prompt, or share prompt)
+- Keep it under 150 words — punchy beats long
+
+Hashtags:
+- 15-20 hashtags, space-separated
+- Mix: 5 broad reach (#content #creator), 10 niche-specific, 5 trending/topical
+- No hashtags with spaces or special characters`;
 }

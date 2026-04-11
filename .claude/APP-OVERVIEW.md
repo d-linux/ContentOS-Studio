@@ -27,7 +27,7 @@ ContentOS Studio is a full content production system and creator operating syste
 | API                | tRPC + Zod                                        |
 | Database           | PostgreSQL + Drizzle ORM                          |
 | Auth               | Clerk                                             |
-| AI                 | Anthropic Claude API (@anthropic-ai/sdk)          |
+| AI                 | Anthropic Claude Haiku 4.5 (@anthropic-ai/sdk)    |
 | Payments           | Stripe                                            |
 | Email              | Resend                                            |
 | Cache / Rate Limit | Upstash Redis                                     |
@@ -73,7 +73,7 @@ ContentOS Studio is a full content production system and creator operating syste
 - **Middleware pipeline** — Arcjet (bot + rate limit + shield) → Clerk (auth) → route
 - **Prettier + ESLint** — configured with Tailwind plugin, eslint-config-prettier, zero warnings
 - **Brand Brain CRUD** — tRPC router: get + upsert, auto-marks onboarding complete on first create
-- **Script generation engine** — Anthropic Claude API with `messages.parse` + `zodOutputFormat` for structured scene-by-scene output
+- **Script generation engine** — Anthropic Claude Haiku 4.5 with `messages.parse` + `zodOutputFormat` for structured scene-by-scene output. System prompt cached (1hr TTL), Brand Brain cached (5min TTL). Anti-AI-slop rules, platform-specific voice guides (YouTube/TikTok/Instagram), varied scene pacing.
 - **Script CRUD** — create (with AI generation + usage deduction), list, getById (with scenes + caption), delete, scene regeneration (1x), scene editing, caption generation, voiceover assembly
 - **Series logic** — 5 connection modes (sequential, anthology, running_format, journey, response), full episode context chaining, series CRUD
 - **Trends** — YouTube Data API v3 search by user niche, Redis-cached (1hr TTL), generate script from trending topic
@@ -195,3 +195,4 @@ Vercel
 | 2026-04-10 | Phase 4.2: Sentry + PostHog — @sentry/nextjs with Session Replay + source maps + tunnel, @posthog/next with auto pageview + user identification |
 | 2026-04-10 | Phase 4.3: Legal pages (Privacy Policy + Terms of Service), E2E testing (Playwright — navigation, API, security), deploy config (vercel.json) |
 | 2026-04-11 | Marketing pages: landing page (hero, features, Brand Brain, script preview, pricing, FAQ), demo page (YouTube embed + guided tour), links page, blog placeholder, (marketing) route group with header/footer |
+| 2026-04-11 | AI engine upgrade: switched to Haiku 4.5 (3-5x faster), prompt caching (system 1hr + Brand Brain 5min), system prompt separation, anti-AI-slop rules, platform-specific voice guides, rewritten all 5 prompt builders |

@@ -18,6 +18,7 @@ import {
   buildScriptPrompt,
   buildSceneRegenerationPrompt,
   buildCaptionPrompt,
+  formatBrandBrain,
 } from "@/lib/ai/prompts";
 
 export const scriptRouter = router({
@@ -116,7 +117,7 @@ export const scriptRouter = router({
         format: input.format,
       });
 
-      const aiOutput = await generateScript(prompt);
+      const aiOutput = await generateScript(formatBrandBrain(brandBrain), prompt);
 
       // Save script
       const [script] = await ctx.db
@@ -252,7 +253,7 @@ export const scriptRouter = router({
         })),
       });
 
-      const aiOutput = await regenerateScene(prompt);
+      const aiOutput = await regenerateScene(formatBrandBrain(brandBrain ?? {}), prompt);
 
       // Update scene — save original, replace content
       const [updated] = await ctx.db
@@ -351,7 +352,7 @@ export const scriptRouter = router({
         brandBrain: brandBrain ?? {},
       });
 
-      const aiOutput = await generateCaption(prompt);
+      const aiOutput = await generateCaption(formatBrandBrain(brandBrain ?? {}), prompt);
 
       // Upsert caption
       const existing = await ctx.db

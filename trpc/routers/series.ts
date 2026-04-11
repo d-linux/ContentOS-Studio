@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { router, protectedProcedure, rateLimitedProcedure } from "../init";
 import { series, scripts, scenes, brandBrains, users } from "@/db/schema";
 import { generateScript } from "@/lib/ai/generate";
-import { buildSeriesEpisodePrompt } from "@/lib/ai/prompts";
+import { buildSeriesEpisodePrompt, formatBrandBrain } from "@/lib/ai/prompts";
 
 export const seriesRouter = router({
   // ─── List all series for the current user ─────────────
@@ -178,7 +178,7 @@ export const seriesRouter = router({
         format: input.format,
       });
 
-      const aiOutput = await generateScript(prompt);
+      const aiOutput = await generateScript(formatBrandBrain(brandBrain), prompt);
 
       // Save script
       const [script] = await ctx.db

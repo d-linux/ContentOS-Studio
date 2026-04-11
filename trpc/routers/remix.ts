@@ -4,7 +4,7 @@ import { TRPCError } from "@trpc/server";
 import { router, rateLimitedProcedure } from "../init";
 import { scripts, scenes, brandBrains, users } from "@/db/schema";
 import { generateScript } from "@/lib/ai/generate";
-import { buildRemixPrompt } from "@/lib/ai/prompts";
+import { buildRemixPrompt, formatBrandBrain } from "@/lib/ai/prompts";
 
 export const remixRouter = router({
   // ─── Remix a script for a different platform ──────────
@@ -82,7 +82,7 @@ export const remixRouter = router({
         targetPlatform: input.targetPlatform,
       });
 
-      const aiOutput = await generateScript(prompt);
+      const aiOutput = await generateScript(formatBrandBrain(brandBrain), prompt);
 
       // Save remixed script
       const [script] = await ctx.db
